@@ -22,6 +22,14 @@ public class Bytecode {
     public static final int POP = 15; // throws away the top of the stack
     public static final int HALT = 16;
     
+    // java
+    public static final int NEW = 0xBB; // create a reference, usually with this pattern: new -> dup -> invokespecial -> astore
+    public static final int INVOKEINTERFACE = 0xB9; // call an interface method
+    public static final int INVOKESTATIC = 0xB8; // call a static method
+    public static final int INVOKESPECIAL = 0xB7; // call either a constructor, a private method or a superclass method
+    public static final int INVOKEVIRTUAL = 0xB6; // call a class instance method (eg. System.out.println(...))
+    public static final int DUP = 0x59;
+    
     /**
      * Used for debugging purposes - string representation of opcodes for output.
      */
@@ -39,10 +47,18 @@ public class Bytecode {
         new Instruction("LOAD", 1),
         new Instruction("GLOAD", 1),
         new Instruction("STORE", 1),
-        new Instruction("GSTORE"),
+        new Instruction("GSTORE", 1),
         new Instruction("PRINT"),
         new Instruction("POP"),
-        new Instruction("HALT")
+        new Instruction("HALT"),
+        
+        // java
+        new Instruction("NEW", 1),
+        new Instruction("INVOKESTATIC", 1),
+        new Instruction("INVOKEINTERFACE", 1),
+        new Instruction("INVOKESPECIAL", 1),
+        new Instruction("INVOKEVIRTUAL", 1),
+        new Instruction("DUP")
     };
     
     public static class Instruction {

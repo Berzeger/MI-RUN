@@ -64,14 +64,13 @@ public class VM {
         }
         
         if (debug) {
-            System.err.printf("%-35s", disassemble());
+            if (ip < code.length) System.err.printf("%-35s", disassemble());
             System.err.println(stackString());
             dumpDataMemory();
         }
     }
 
     private String disassemble() {
-        if (ip >= code.length) return "";
         int opcode = code[ip];
         String opName = Bytecode.instructions[opcode].name;
         StringBuilder buf = new StringBuilder();
