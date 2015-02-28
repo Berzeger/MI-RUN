@@ -17,8 +17,8 @@ public class Main {
     
     public static void main(String[] args) {
         BytecodeReader br = new BytecodeReader();
-        VM vm = new VM(test, 0, 1);
-        vm.debug = true;
-        vm.run();
+        //VM vm = new VM(test, 0, 1);
+        //vm.debug = true;
+        //vm.run();
     }
 }

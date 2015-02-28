@@ -45,6 +45,10 @@ public class BytecodeReader {
             clazz = cParser.parse();
             methods = clazz.getMethods();
             cPool = clazz.getConstantPool();
+            
+            for (Method method : methods) {
+                System.out.println(method);
+            }
         } catch (IOException ex) {
             System.err.println("Could not locate or read class file.");
         }
