@@ -2,29 +2,37 @@ package vm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import static vm.Bytecode.*;
 /**
  *
- * @author Berzeger
+ * @author Filip Vondrášek (filip at vondrasek.net)
  */
 public class VM {
     final int STACK_SIZE = 100;
     
     int[] globals;
     int[] code;
-    int[] stack;
+    Stack<Integer> stack;
     
     int ip; // Instruction Pointer
     int sp = -1; // Stack Pointer
     int fp; // Function Pointer
     
+    BytecodeReader bcReader; // byte code reader
+    Bytecode bytecode; // bytecode constants etc
+    
     public boolean debug = false;
     
-    public VM(int[] code, int main, int datasize) {
+    private VM() { }
+    
+    public VM(int[] code, int main, int datasize, Bytecode bc, BytecodeReader br) {
         this.code = code;
         this.ip = main;
         globals = new int[datasize];
-        stack = new int[STACK_SIZE];
+        stack = new Stack<>();
+        bcReader = br;
+        bytecode = bc;
     }
     
     public void run() {
@@ -33,7 +41,10 @@ public class VM {
             int opcode = code[ip]; // Fetch the first instruction
             if (debug) System.err.printf("%-35s", disassemble());       
             ip++;
-            switch (opcode) {
+            
+            executeOpcode(opcode);
+            
+            /*
                 case ICONST:
                     int operand = code[ip++]; // Read the operand from the code
                     stack[++sp] = operand; // Increase SP and push the operand
@@ -58,7 +69,7 @@ public class VM {
                     break;
                 case HALT:
                     break loop;
-            }
+            */
             
             if (debug) System.err.println(stackString());
         }
@@ -70,12 +81,65 @@ public class VM {
         }
     }
 
+    private void executeOpcode(int opcode) {
+        /* TODO:
+         *  (x) Create a class for Stack. Allow it to be popped while simultaneously working with sp. Maybe default Java Stack would be enough?
+         *  Create Instruction class with a construction taking globals ArrayList, code ArrayList and stack Stack
+         *  Each method will have it's own bytearray - we need to have an ip for each of them - need to think that thru
+         */
+        switch (opcode) {
+            case ICONST_M1:
+                stack.push(-1);
+                break;
+            case ICONST_0:
+                stack.push(0);
+                break;
+            case ICONST_1:
+                stack.push(1);
+                break;
+            case ICONST_2:
+                stack.push(2);
+                break;
+            case ICONST_3:
+                stack.push(3);
+                break;
+            case ICONST_4:
+                stack.push(4);
+                break;
+            case ICONST_5:
+                stack.push(5);
+                break;       
+            case IADD:
+                int operand1 = stack.pop();
+                int operand2 = stack.pop();
+                stack.push(operand1 + operand2);
+                break;
+            case ISUB:
+                // subtract the top operand from the operand below
+                operand1 = stack.pop();
+                operand2 = stack.pop();
+                stack.push(operand2 - operand1);
+                break;
+            case IDIV:
+                // divide the top operand by the operand below
+                operand1 = stack.pop();
+                operand2 = stack.pop();
+                stack.push(operand2 / operand1);
+                break;
+            case IMUL:
+                operand1 = stack.pop();
+                operand2 = stack.pop();
+                stack.push(operand1 * operand2);
+                break;
+        }
+    }
+    
     private String disassemble() {
         int opcode = code[ip];
-        String opName = Bytecode.instructions[opcode].name;
+        String opName = bytecode.getInstructions().get(opcode).name;
         StringBuilder buf = new StringBuilder();
         buf.append(String.format("%04d:\t%-11s", ip, opName));
-        int nargs = Bytecode.instructions[opcode].numOfOperands;
+        int nargs = bytecode.getInstructions().get(opcode).numOfOperands;
         
         if (nargs > 0) {
             List<String> operands = new ArrayList<>();
@@ -96,17 +160,7 @@ public class VM {
     }
 
     private String stackString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append("stack=[");
-        
-        for (int i = 0; i <= sp; i++) {
-            int o = stack[i];
-            buf.append(" ");
-            buf.append(o);
-        }
-        
-        buf.append(" ]");
-        return buf.toString();
+        return "stack = " + stack.toString();
     }
     
     private void dumpDataMemory() {
