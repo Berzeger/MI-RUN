@@ -6,10 +6,12 @@ import java.util.Stack;
  *
  * @author Filip Vondrášek (filip at vondrasek.net)
  */
-public class ICONST_M1 extends Instruction {
+public class IMUL extends Instruction {
 
     @Override
     public void execute(Stack<Integer> stack) {
-        stack.push(-1);
+        int operand1 = stack.pop();
+        int operand2 = stack.pop();
+        stack.push(operand1 * operand2);
     }
 }

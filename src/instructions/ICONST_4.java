@@ -4,12 +4,12 @@ import java.util.Stack;
 
 /**
  *
- * @author Filip Vondrášek (filip at vondrasek.net)
+ * @author Filip
  */
-public class ICONST_M1 extends Instruction {
+public class ICONST_4 extends Instruction {
 
     @Override
     public void execute(Stack<Integer> stack) {
-        stack.push(-1);
+        stack.push(4);
     }
 }
