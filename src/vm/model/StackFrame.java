@@ -15,7 +15,7 @@ public class StackFrame {
 
     private final byte[] content;
     private int offset = 0;
-    public MyMethod actualMethod;
+    public VMMethod actualMethod;
 
     public StackFrame(int contentSize) {
 
@@ -23,7 +23,24 @@ public class StackFrame {
 
     }
 
-    public StackFrame(int contentSize, int returnAddress, MyLookupReturn lookupReturn, int objectPointer) {
+    public StackFrame(int contentSize, int returnAddress, MethodLookup lookupReturn) {
+
+	this(contentSize);
+	actualMethod = lookupReturn.method;
+
+	// push return address
+	pushInt(returnAddress);
+
+	// 1 - n (args + other locals)
+	offset += (lookupReturn.method.arguments.length + lookupReturn.method.locals.length) * FieldType.TYPE_BYTE_SIZE;
+
+	// current frame is the caller frame
+	for (int i = 0; i < lookupReturn.args.length; i++) {
+	    setLocalValue(1 + i, lookupReturn.args[i]);
+	}
+
+    }
+    public StackFrame(int contentSize, int returnAddress, MethodLookup lookupReturn, int objectPointer) {
 
 	this(contentSize);
 	actualMethod = lookupReturn.method;
@@ -56,6 +73,13 @@ public class StackFrame {
     public void push(byte[] bytes) {
 	for (byte b : bytes) {
 	    content[offset++] = b;
+	}
+    }
+
+    public void setLocalValue(int index, byte[] value) {
+	int valueStart = index * FieldType.TYPE_BYTE_SIZE + FieldType.TYPE_BYTE_SIZE;
+	for (int i = 0; i < value.length; i++) {
+	    content[i + valueStart] = value[i];
 	}
     }
 

@@ -9,14 +9,14 @@ package vm.model;
  *
  * @author Václav
  */
-public class VMMethod {
-
+public class VMClass {
+    
+    public int address;
     public String name;
-    public VMField[] arguments;
-    public VMField[] locals;
-    public FieldType returnType;
-    public int instructionPointer;
-    public VMClass classs;
-    public boolean isStatic;
-    public boolean isNative;
+    public VMField[] fields;
+    public VMMethod[] methods;
+    public VMClass superClass;
+    public String superClassName;
+    public VMConstantPool constantPool;
+
 }

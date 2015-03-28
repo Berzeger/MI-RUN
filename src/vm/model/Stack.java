@@ -10,45 +10,40 @@ package vm.model;
  * @author Václav
  */
 public class Stack {
-    
+
     private final StackFrame[] stackFrames;
     private final int stackFrameSize;
     private int currentFrameIndex = 0;
-    
-    
 
     public Stack(int stackFramesCount, int stackFrameSize) {
 	this.stackFrames = new StackFrame[stackFramesCount];
 	this.stackFrameSize = stackFrameSize;
-	
+
 	this.stackFrames[0] = new StackFrame(stackFrameSize);
-	
+
     }
-    
-    public void beginStackFrame(int returnAddress, MyLookupReturn lr) {
-	return beginStackFrame(returnAdress, lr, -1);
+
+    public void beginStackFrame(int returnAddress, MethodLookup lr) {
+	beginStackFrame(returnAddress, lr, -1);
     }
-    
-    public void beginStackFrame(int returnAddress, MyLookupReturn lr, int objectPointer) {
-	
-	if(objectPointer > -1){
-	    StackFrame frame = new StackFrame(getCurrentStackFrame(), stackFrameSize, returnAddress, lr, objectPointer);
+
+    public void beginStackFrame(int returnAddress, MethodLookup lr, int objectPointer) {
+	StackFrame frame;
+
+	if (objectPointer > -1) {
+	    frame = new StackFrame(stackFrameSize, returnAddress, lr, objectPointer);
+	} else {
+	    frame = new StackFrame(stackFrameSize, returnAddress, lr);
 	}
-	else{
-	    StackFrame frame = new StackFrame(getCurrentStackFrame(), stackFrameSize, returnAddress, lr);
-	}
-        stackFrames[++currentFrameIndex] = frame;
-	
+	stackFrames[++currentFrameIndex] = frame;
+
     }
-    
-    
+
     private StackFrame getCurrentStackFrame() {
-        if (currentFrameIndex < 0) {
-            return null;
-        }
-        return stackFrames[currentFrameIndex];
+	if (currentFrameIndex < 0) {
+	    return null;
+	}
+	return stackFrames[currentFrameIndex];
     }
-    
-   
-    
+
 }
