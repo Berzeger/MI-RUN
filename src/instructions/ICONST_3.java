@@ -1,6 +1,6 @@
 package instructions;
 
-import java.util.Stack;
+import vm.VM;
 
 /**
  *
@@ -9,7 +9,7 @@ import java.util.Stack;
 public class ICONST_3 extends Instruction {
 
     @Override
-    public void execute(Stack<Integer> stack) {
-        stack.push(3);
+    public void execute(VM vm) {
+        vm.getStack().push(3);
     }
 }

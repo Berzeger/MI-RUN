@@ -1,6 +1,6 @@
 package instructions;
 
-import java.util.Stack;
+import vm.VM;
 
 /**
  *
@@ -9,10 +9,10 @@ import java.util.Stack;
 public class ISUB extends Instruction {
 
     @Override
-    public void execute(Stack<Integer> stack) {
+    public void execute(VM vm) {
         // subtract the top operand from the operand below
-        int operand1 = stack.pop();
-        int operand2 = stack.pop();
-        stack.push(operand2 - operand1);
+        int operand1 = vm.getStack().pop();
+        int operand2 = vm.getStack().pop();
+        vm.getStack().push(operand2 - operand1);
     }
 }

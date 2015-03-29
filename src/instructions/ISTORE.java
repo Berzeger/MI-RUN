@@ -1,6 +1,6 @@
 package instructions;
 
-import java.util.Stack;
+import vm.VM;
 
 /**
  *
@@ -9,7 +9,7 @@ import java.util.Stack;
 public class ISTORE extends Instruction {
 
     @Override
-    public void execute(Stack<Integer> stack) {
+    public void execute(VM vm) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

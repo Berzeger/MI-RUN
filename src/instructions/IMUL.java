@@ -1,6 +1,6 @@
 package instructions;
 
-import java.util.Stack;
+import vm.VM;
 
 /**
  *
@@ -9,9 +9,9 @@ import java.util.Stack;
 public class IMUL extends Instruction {
 
     @Override
-    public void execute(Stack<Integer> stack) {
-        int operand1 = stack.pop();
-        int operand2 = stack.pop();
-        stack.push(operand1 * operand2);
+    public void execute(VM vm) {
+        int operand1 = vm.getStack().pop();
+        int operand2 = vm.getStack().pop();
+        vm.getStack().push(operand1 * operand2);
     }
 }

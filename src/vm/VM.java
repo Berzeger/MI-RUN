@@ -97,37 +97,37 @@ public class VM {
          */
         switch (opcode) {
             case ICONST_M1:
-                new instructions.ICONST_M1().execute(stack);
+                new instructions.ICONST_M1().execute(this);
                 break;
             case ICONST_0:
-                new instructions.ICONST_0().execute(stack);
+                new instructions.ICONST_0().execute(this);
                 break;
             case ICONST_1:
-                new instructions.ICONST_1().execute(stack);
+                new instructions.ICONST_1().execute(this);
                 break;
             case ICONST_2:
-                new instructions.ICONST_2().execute(stack);
+                new instructions.ICONST_2().execute(this);
                 break;
             case ICONST_3:
-                new instructions.ICONST_3().execute(stack);
+                new instructions.ICONST_3().execute(this);
                 break;
             case ICONST_4:
-                new instructions.ICONST_4().execute(stack);
+                new instructions.ICONST_4().execute(this);
                 break;
             case ICONST_5:
-                new instructions.ICONST_5().execute(stack);
+                new instructions.ICONST_5().execute(this);
                 break;
             case IADD:
-                new instructions.IADD().execute(stack);
+                new instructions.IADD().execute(this);
                 break;
             case ISUB:
-                new instructions.ISUB().execute(stack);
+                new instructions.ISUB().execute(this);
                 break;
             case IDIV:
-                new instructions.IDIV().execute(stack);
+                new instructions.IDIV().execute(this);
                 break;
             case IMUL:
-                new instructions.IMUL().execute(stack);
+                new instructions.IMUL().execute(this);
                 break;
         }
     }
@@ -169,5 +169,9 @@ public class VM {
             addr++;
         }
         System.err.println();
+    }
+    
+    public Stack<Integer> getStack() {
+        return stack;
     }
 }
