@@ -32,7 +32,7 @@ public class StackFrame {
 	pushInt(returnAddress);
 
 	// 1 - n (args + other locals)
-	offset += (lookupReturn.method.arguments.length + lookupReturn.method.locals.length) * FieldType.TYPE_BYTE_SIZE;
+	offset += (lookupReturn.method.arguments.size() + lookupReturn.method.locals.size()) * FieldType.TYPE_BYTE_SIZE;
 
 	// current frame is the caller frame
 	for (int i = 0; i < lookupReturn.args.length; i++) {
@@ -53,7 +53,7 @@ public class StackFrame {
 	pushPointer(objectPointer);
 
 	// 1 - n (args + other locals)
-	offset += (lookupReturn.method.arguments.length + lookupReturn.method.locals.length) * FieldType.TYPE_BYTE_SIZE;
+	offset += (lookupReturn.method.arguments.size() + lookupReturn.method.locals.size()) * FieldType.TYPE_BYTE_SIZE;
 
 	// current frame is the caller frame
 	for (int i = 0; i < lookupReturn.args.length; i++) {

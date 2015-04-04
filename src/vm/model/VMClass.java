@@ -5,6 +5,9 @@
  */
 package vm.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Václav
@@ -13,8 +16,8 @@ public class VMClass {
     
     public int address;
     public String name;
-    public VMField[] fields;
-    public VMMethod[] methods;
+    public List<VMField> fields = new ArrayList<>();
+    public List<VMMethod> methods = new ArrayList<>();
     public VMClass superClass;
     public String superClassName;
     public VMConstantPool constantPool;

@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import static vm.Bytecode.*;
+import vm.model.VMClass;
+import vm.model.VMMethod;
+import vm.tables.ClassesTable;
+import vm.tables.MethodsTable;
 
 /**
  *
@@ -23,19 +27,23 @@ public class VM {
 
     BytecodeReader bcReader; // byte code reader
     Bytecode bytecode; // bytecode constants etc
+    ClassesTable classesTable;
+    MethodsTable methodsTable;
 
     public boolean debug = false;
 
     private VM() {
     }
 
-    public VM(int[] code, int main, int datasize, Bytecode bc, BytecodeReader br) {
+    public VM(int[] code, int main, int datasize) {
         this.code = code;
         this.ip = main;
         globals = new int[datasize];
         stack = new Stack<>();
-        bcReader = br;
-        bytecode = bc;
+        classesTable = new ClassesTable();
+        methodsTable = new MethodsTable();
+        bcReader = new BytecodeReader(this);
+        bytecode = new Bytecode();
     }
 
     public void run() {
@@ -97,37 +105,37 @@ public class VM {
          */
         switch (opcode) {
             case ICONST_M1:
-                new instructions.ICONST_M1().execute(this);
+                new vm.instructions.ICONST_M1().execute(this);
                 break;
             case ICONST_0:
-                new instructions.ICONST_0().execute(this);
+                new vm.instructions.ICONST_0().execute(this);
                 break;
             case ICONST_1:
-                new instructions.ICONST_1().execute(this);
+                new vm.instructions.ICONST_1().execute(this);
                 break;
             case ICONST_2:
-                new instructions.ICONST_2().execute(this);
+                new vm.instructions.ICONST_2().execute(this);
                 break;
             case ICONST_3:
-                new instructions.ICONST_3().execute(this);
+                new vm.instructions.ICONST_3().execute(this);
                 break;
             case ICONST_4:
-                new instructions.ICONST_4().execute(this);
+                new vm.instructions.ICONST_4().execute(this);
                 break;
             case ICONST_5:
-                new instructions.ICONST_5().execute(this);
+                new vm.instructions.ICONST_5().execute(this);
                 break;
             case IADD:
-                new instructions.IADD().execute(this);
+                new vm.instructions.IADD().execute(this);
                 break;
             case ISUB:
-                new instructions.ISUB().execute(this);
+                new vm.instructions.ISUB().execute(this);
                 break;
             case IDIV:
-                new instructions.IDIV().execute(this);
+                new vm.instructions.IDIV().execute(this);
                 break;
             case IMUL:
-                new instructions.IMUL().execute(this);
+                new vm.instructions.IMUL().execute(this);
                 break;
         }
     }
@@ -173,5 +181,13 @@ public class VM {
     
     public Stack<Integer> getStack() {
         return stack;
+    }
+    
+    public List<VMClass> getClassesTable() {
+        return classesTable.getClasses();
+    }
+    
+    public List<VMMethod> getMethodsTable() {
+        return methodsTable.getMethods();
     }
 }

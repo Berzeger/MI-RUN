@@ -5,6 +5,9 @@
  */
 package vm.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Václav
@@ -12,11 +15,11 @@ package vm.model;
 public class VMMethod {
 
     public String name;
-    public VMField[] arguments;
-    public VMField[] locals;
+    public List<VMField> arguments = new ArrayList<>();
+    public List<VMField> locals = new ArrayList<>();
     public FieldType returnType;
     public int instructionPointer;
-    public VMClass classs;
+    public VMClass clazz;
     public boolean isStatic;
     public boolean isNative;
 }
