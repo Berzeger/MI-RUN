@@ -3,14 +3,24 @@ package vm;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.bcel.classfile.ClassParser;
-import org.apache.bcel.classfile.ConstantPool;
+import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.classfile.LocalVariable;
+import org.apache.bcel.classfile.LocalVariableTable;
 import org.apache.bcel.classfile.Method;
+import org.apache.bcel.generic.Type;
+import static org.apache.bcel.generic.Type.INT;
+import static org.apache.bcel.generic.Type.VOID;
 import org.apache.commons.io.FilenameUtils;
+import vm.model.FieldType;
 import vm.model.VMClass;
+import vm.model.VMConstantPool;
+import vm.model.VMField;
 import vm.model.VMMethod;
 
 /**
@@ -40,46 +50,18 @@ public class BytecodeReader {
     
     private ClassParser cParser;
     private JavaClass clazz;    
+    private final VM virtualMachine;
     
-    public BytecodeReader(VM vm) {
+    public BytecodeReader(VM virtualMachine) {
+        this.virtualMachine = virtualMachine;
+        
+        List<VMClass> classesList = new ArrayList<>();
         try {
-            // TODO: Not hardcoded path
             // For each file in directory
             Files.walk(Paths.get("./examples")).forEach(filePath -> {
                 // Is it a class file?
-                System.out.println(filePath.toString());
                if (FilenameUtils.getExtension(filePath.toString()).equals("class")) {
-                   try {
-                       cParser = new ClassParser(filePath.toString());
-                       clazz = cParser.parse();
-                       VMClass classToSave = new VMClass();
-                       // int address - dafuq is this?
-                       classToSave.name = clazz.getClassName();
-                       // VMField List fields
-                       // VMMethod List methods
-                       // VMClass superclass
-                       classToSave.superClassName = clazz.getSuperclassName();
-                       // VMConstantPool constant pool
-                       
-                       for (Method method : clazz.getMethods()) {
-                           VMMethod meth = new VMMethod();
-                           meth.name = method.getName();
-                           // VMField List arguments
-                           // VMField List locals
-                           // FieldType return type
-                           meth.instructionPointer = 0;
-                           meth.clazz = classToSave;
-                           meth.isStatic = method.isStatic();
-                           meth.isNative = method.isNative();
-                           classToSave.methods.add(meth);
-                           
-                           vm.getMethodsTable().add(meth);
-                       }
-                       
-                       vm.getClassesTable().add(classToSave);
-                   } catch (IOException ex) {
-                       Logger.getLogger(BytecodeReader.class.getName()).log(Level.SEVERE, null, ex);
-                   }
+                   classesList.add(parseClass(filePath.toString()));
                }
             });
             
@@ -95,19 +77,130 @@ public class BytecodeReader {
                 // Prints out one byte
                 System.out.println(method.getCode().getCode()[0]);
             }
-                    */
+            */
         } catch (IOException ex) {
             System.err.println("Could not locate or read class file.");
+        }    
+    }
+    
+    private FieldType translateType(Type type) {
+        if (type == INT) {
+            return vm.model.FieldType.INT;
+        } else if (type == VOID) {
+            return vm.model.FieldType.VOID;
+        }
+            
+        return vm.model.FieldType.POINTER;        
+    } 
+    
+    private FieldType getVariableType(LocalVariable var) {
+        String signature = var.getSignature();
+        if (signature.equalsIgnoreCase("I")) {
+            return FieldType.INT;
+        } else {
+            return FieldType.POINTER;
         }
     }
     
-    public Method[] getMethods() {
-        return clazz.getMethods();
+    private FieldType getArgumentTypeType(Type type) {
+        String signature = type.getSignature();
+        if (signature.equalsIgnoreCase("int")) {
+            return FieldType.INT;
+        } else {
+            return FieldType.POINTER;
+        }        
+    }
+
+    private VMClass parseClass(String filePath) {
+        VMClass classToSave = new VMClass();
+        
+        try {
+           cParser = new ClassParser(filePath);
+           clazz = cParser.parse();
+           // int address - dafuq is this?
+           classToSave.name = clazz.getClassName();
+           classToSave.fields = new ArrayList<>();
+           classToSave.methods = new ArrayList<>();
+
+           for (Field field : clazz.getFields()) {
+               classToSave.fields.add(parseField(field));
+           }
+
+           // VMClass superclass - Can be loaded later perhaps in method lookup
+           classToSave.superClassName = clazz.getSuperclassName();
+           classToSave.constantPool = new VMConstantPool();
+
+           for (Method method : clazz.getMethods()) {
+               VMMethod meth = parseMethod(method, classToSave);
+               classToSave.methods.add(meth);
+               virtualMachine.getMethodsTable().add(meth);
+           }
+
+           virtualMachine.getClassesTable().add(classToSave);
+        } catch (IOException ex) {
+            Logger.getLogger(BytecodeReader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+       return classToSave;
+    }
+
+    private VMField parseField(Field field) {
+        return new VMField(
+            field.getName(),
+            translateType(field.getType()),
+            getClass(field.getType().getSignature())
+        );
+    }
+
+    private VMMethod parseMethod(Method method, VMClass clazz) {
+        VMMethod meth = new VMMethod();
+        meth.name = method.getName();
+        meth.arguments = parseVariables(method);
+        meth.locals = parseVariables(method);
+        meth.returnType = translateType(method.getReturnType());
+        meth.instructionPointer = 0;
+        meth.clazz = clazz;
+        meth.isStatic = method.isStatic();
+        meth.isNative = method.isNative();        
+        return meth;
+    }  
+
+    private List<VMField> parseVariables(Method method) {
+       List<VMField> variables = new ArrayList<>();
+       LocalVariableTable varTable = method.getLocalVariableTable();
+       
+       if (varTable != null) {
+           for (int i = 0; i < varTable.getTableLength(); i++) {
+               LocalVariable var = varTable.getLocalVariable(i);
+               // If this doesn't work, look at LocalVariableProcessor and ArgumentVariableProcessor
+               if (var == null || var.getStartPC() == 0 || (i == 0 && !method.isStatic())) {
+                   continue;
+               }
+               variables.add(new VMField(var.getName(), getVariableType(var), getClass(var.getSignature())));
+           }
+       } else if (method.getName().equalsIgnoreCase("<init>") || method.isNative()) {
+           Type[] types = method.getArgumentTypes();
+           for (int i = 0; i < types.length; i++) {
+               variables.add(new VMField("wtf", getArgumentTypeType(types[i]), getClass(types[i].getSignature())));
+           }
+       }
+       
+       return variables;
     }
     
-    public ConstantPool getConstantPool() {
-        return clazz.getConstantPool();
+    private String getClass(String signature) {
+         if (signature.equalsIgnoreCase("I")) {
+            return "Integer";
+        } else if (signature.equalsIgnoreCase("[B")) {
+            return "java.lang.Array";
+        } else {
+            signature = signature.replace("[L", "").replace(";", "").replace("/", ".");
+            
+            if (signature.startsWith("L")) {
+                signature = signature.substring(1);
+            }
+            
+            return signature;
+        }
     }
-    
-    
 }

@@ -19,6 +19,10 @@ public class ClassesTable {
     public ClassesTable() {
         classList = new ArrayList<>();
     }
+
+    public ClassesTable(List<VMClass> parsedClasses) {
+        classList = parsedClasses;
+    }
     
     public void addClass(VMClass clazz) {
         classList.add(clazz);

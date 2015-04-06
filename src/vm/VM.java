@@ -44,6 +44,12 @@ public class VM {
         methodsTable = new MethodsTable();
         bcReader = new BytecodeReader(this);
         bytecode = new Bytecode();
+        
+        if (debug) {
+            for (VMClass clazz : classesTable.getClasses()) {
+                System.out.println("Class name: " + clazz.name + ", superclass: " + clazz.superClassName);        
+            }
+        }
     }
 
     public void run() {
