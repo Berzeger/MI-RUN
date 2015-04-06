@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.bcel.classfile.ClassParser;
+import org.apache.bcel.classfile.Constant;
+import org.apache.bcel.classfile.ConstantInteger;
+import org.apache.bcel.classfile.ConstantString;
 import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.LocalVariable;
@@ -18,6 +21,8 @@ import static org.apache.bcel.generic.Type.INT;
 import static org.apache.bcel.generic.Type.VOID;
 import org.apache.commons.io.FilenameUtils;
 import vm.model.FieldType;
+import vm.model.VMCPoolItem;
+import vm.model.VMCPoolItem.CPType;
 import vm.model.VMClass;
 import vm.model.VMConstantPool;
 import vm.model.VMField;
@@ -54,14 +59,12 @@ public class BytecodeReader {
     
     public BytecodeReader(VM virtualMachine) {
         this.virtualMachine = virtualMachine;
-        
-        List<VMClass> classesList = new ArrayList<>();
         try {
             // For each file in directory
             Files.walk(Paths.get("./examples")).forEach(filePath -> {
                 // Is it a class file?
                if (FilenameUtils.getExtension(filePath.toString()).equals("class")) {
-                   classesList.add(parseClass(filePath.toString()));
+                   parseClass(filePath.toString());
                }
             });
             
@@ -85,12 +88,12 @@ public class BytecodeReader {
     
     private FieldType translateType(Type type) {
         if (type == INT) {
-            return vm.model.FieldType.INT;
+            return FieldType.INT;
         } else if (type == VOID) {
-            return vm.model.FieldType.VOID;
+            return FieldType.VOID;
         }
             
-        return vm.model.FieldType.POINTER;        
+        return FieldType.POINTER;        
     } 
     
     private FieldType getVariableType(LocalVariable var) {
@@ -111,7 +114,7 @@ public class BytecodeReader {
         }        
     }
 
-    private VMClass parseClass(String filePath) {
+    private void parseClass(String filePath) {
         VMClass classToSave = new VMClass();
         
         try {
@@ -128,7 +131,7 @@ public class BytecodeReader {
 
            // VMClass superclass - Can be loaded later perhaps in method lookup
            classToSave.superClassName = clazz.getSuperclassName();
-           classToSave.constantPool = new VMConstantPool();
+           classToSave.constantPool = parseConstantPool(clazz);
 
            for (Method method : clazz.getMethods()) {
                VMMethod meth = parseMethod(method, classToSave);
@@ -140,8 +143,6 @@ public class BytecodeReader {
         } catch (IOException ex) {
             Logger.getLogger(BytecodeReader.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-       return classToSave;
     }
 
     private VMField parseField(Field field) {
@@ -202,5 +203,26 @@ public class BytecodeReader {
             
             return signature;
         }
+    }
+
+    private VMConstantPool parseConstantPool(JavaClass clazz) {
+        VMConstantPool cPool = new VMConstantPool();
+        
+        for (int i = 0; i < clazz.getConstantPool().getLength(); i++) {            
+            Constant cPoolConstant = clazz.getConstantPool().getConstant(i);
+            
+            if (cPoolConstant instanceof ConstantString) {
+                CPType type = CPType.STRING;
+                String value = (((ConstantString)cPoolConstant).toString());
+                cPool.addItem(new VMCPoolItem(CPType.STRING, value));
+            // Does the following else if ever trigger? Doesn't seem to.
+            } else if (cPoolConstant instanceof ConstantInteger) {
+                CPType type = CPType.INT;
+                int value = ((ConstantInteger)cPoolConstant).getBytes();
+                cPool.addItem(new VMCPoolItem(CPType.INT, Integer.toString(value)));
+            }
+        }
+        
+        return cPool;
     }
 }

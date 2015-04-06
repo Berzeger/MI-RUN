@@ -29,4 +29,8 @@ public class VMConstantPool {
     public VMCPoolItem getItem(int pos) {
 	return items.get(pos);
     }
+    
+    public int size() {
+        return pointer;
+    }
 }

@@ -12,7 +12,6 @@ package vm.model;
 public class VMCPoolItem {
 
     public enum CPType {
-
 	STRING, INT
     }
 

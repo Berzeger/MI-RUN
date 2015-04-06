@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import static vm.Bytecode.*;
+import vm.model.VMCPoolItem;
 import vm.model.VMClass;
+import vm.model.VMField;
 import vm.model.VMMethod;
 import vm.tables.ClassesTable;
 import vm.tables.MethodsTable;
@@ -44,15 +46,36 @@ public class VM {
         methodsTable = new MethodsTable();
         bcReader = new BytecodeReader(this);
         bytecode = new Bytecode();
-        
+    }
+    
+    private void printDebugInfo() {
         if (debug) {
             for (VMClass clazz : classesTable.getClasses()) {
-                System.out.println("Class name: " + clazz.name + ", superclass: " + clazz.superClassName);        
+                System.err.println("Class name: " + clazz.name + ", superclass: " + clazz.superClassName);    
+                
+                for (VMMethod method : clazz.methods) {
+                    System.err.println("\tMethod name: " + method.name + ", return type: " + method.returnType);
+                    
+                    for (VMField argument : method.arguments) {
+                        System.err.println("\t\tArgument: " + argument.name + ", argument type: " + argument.type);
+                    }
+                    for (VMField local : method.locals) {
+                        System.err.println("\t\tLocal: " + local.name + ", local type: " + local.type);
+                    }
+                }
+                
+                System.err.println("\tConstant Pool:");
+                
+                for (int i = 0; i < clazz.constantPool.size(); i++) {
+                    System.err.println("\t\tcPoolItem type: " + clazz.constantPool.getItem(i).getType() + ", cPoolItem value: " + clazz.constantPool.getItem(i).getValue());
+                }
             }
         }
     }
 
     public void run() {
+        printDebugInfo();
+        
         loop:
         while (ip < code.length) {
             int opcode = code[ip]; // Fetch the first instruction

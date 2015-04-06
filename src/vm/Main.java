@@ -16,11 +16,11 @@ public class Main {
     };*/
     
     public static int[] test = {
-      ICONST_M1,
-      ICONST_M1,
-      ICONST_3,
-      IADD,
-      ISUB
+      //ICONST_M1,
+      //ICONST_M1,
+      //ICONST_3,
+      //IADD,
+      //ISUB
     };
     
     public static void main(String[] args) {
