@@ -213,7 +213,7 @@ public class BytecodeReader {
             
             if (cPoolConstant instanceof ConstantString) {
                 CPType type = CPType.STRING;
-                String value = (((ConstantString)cPoolConstant).toString());
+                String value = (((ConstantString)cPoolConstant).getBytes(clazz.getConstantPool()));
                 cPool.addItem(new VMCPoolItem(CPType.STRING, value));
             // Does the following else if ever trigger? Doesn't seem to.
             } else if (cPoolConstant instanceof ConstantInteger) {

@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class VMClass {
     
-    public int address;
+    public int handle;
     public String name;
     public List<VMField> fields;
     public List<VMMethod> methods;

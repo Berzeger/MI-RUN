@@ -3,8 +3,8 @@ package vm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import org.apache.bcel.classfile.ConstantUtf8;
 import static vm.Bytecode.*;
-import vm.model.VMCPoolItem;
 import vm.model.VMClass;
 import vm.model.VMField;
 import vm.model.VMMethod;
@@ -67,7 +67,12 @@ public class VM {
                 System.err.println("\tConstant Pool:");
                 
                 for (int i = 0; i < clazz.constantPool.size(); i++) {
-                    System.err.println("\t\tcPoolItem type: " + clazz.constantPool.getItem(i).getType() + ", cPoolItem value: " + clazz.constantPool.getItem(i).getValue());
+                    try {
+                        // Maybe we don't have to parseInt?
+                        System.err.println("\t\tcPoolItem type: " + clazz.constantPool.getItem(i).getType() + ", cPoolItem value: " + Integer.parseInt(clazz.constantPool.getItem(i).getValue()));
+                    } catch (Exception ex) {
+                        System.err.println("\t\tcPoolItem type: " + clazz.constantPool.getItem(i).getType() + ", cPoolItem value: " + clazz.constantPool.getItem(i).getValue());  
+                    }
                 }
             }
         }
