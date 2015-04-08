@@ -14,7 +14,7 @@ import vm.model.VMMethod;
  * @author Filip
  */
 public class MethodsTable {
-    private List<VMMethod> methodsList;
+    private final List<VMMethod> methodsList;
     
     public MethodsTable() {
         methodsList = new ArrayList<>();

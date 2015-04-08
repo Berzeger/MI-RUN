@@ -14,7 +14,7 @@ import vm.model.VMClass;
  * @author Filip
  */
 public class ClassesTable {
-    private List<VMClass> classList;
+    private final List<VMClass> classList;
     
     public ClassesTable() {
         classList = new ArrayList<>();
