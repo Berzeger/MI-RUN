@@ -27,6 +27,9 @@ import vm.model.VMClass;
 import vm.model.VMConstantPool;
 import vm.model.VMField;
 import vm.model.VMMethod;
+import vm.parsers.ArgumentParser;
+import vm.parsers.LocalVariableParser;
+import vm.parsers.Parser;
 
 /**
  *
@@ -159,8 +162,8 @@ public class BytecodeReader {
     private VMMethod parseMethod(Method method, VMClass clazz) {
         VMMethod meth = new VMMethod();
         meth.name = method.getName();
-        meth.arguments = parseVariables(method);
-        meth.locals = parseVariables(method);
+        meth.arguments = parseVariables(method, new ArgumentParser());
+        meth.locals = parseVariables(method, new LocalVariableParser());
         meth.returnType = translateType(method.getReturnType());
         meth.instructionPointer = 0;
         meth.clazz = clazz;
@@ -169,7 +172,7 @@ public class BytecodeReader {
         return meth;
     }
 
-    private List<VMField> parseVariables(Method method) {
+    private List<VMField> parseVariables(Method method, Parser parser) {
         List<VMField> variables = new ArrayList<>();
         LocalVariableTable varTable = method.getLocalVariableTable();
 
@@ -177,7 +180,7 @@ public class BytecodeReader {
             for (int i = 0; i < varTable.getTableLength(); i++) {
                 LocalVariable var = varTable.getLocalVariable(i);
                 // If this doesn't work, look at LocalVariableProcessor and ArgumentVariableProcessor
-                if (var == null || var.getStartPC() == 0 || (i == 0 && !method.isStatic())) {
+                if (!parser.canParse(method, var, i)) {
                     continue;
                 }
                 variables.add(new VMField(var.getName(), getVariableType(var), getClass(var.getSignature())));
@@ -193,9 +196,9 @@ public class BytecodeReader {
     }
 
     private String getClass(String signature) {
-        if (signature.equalsIgnoreCase("I")) {
+        if (signature.equals("I")) {
             return "Integer";
-        } else if (signature.equalsIgnoreCase("[B")) {
+        } else if (signature.equals("[B")) {
             return "java.lang.Array";
         } else {
             signature = signature.replace("[L", "").replace(";", "").replace("/", ".");
