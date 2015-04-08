@@ -6,7 +6,9 @@
 package vm.tables;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import vm.model.VMClass;
 
 /**
@@ -15,20 +17,33 @@ import vm.model.VMClass;
  */
 public class ClassesTable {
     private final List<VMClass> classList;
+    private final Map<String, Integer> handlesMap;
+    private int count;
     
     public ClassesTable() {
         classList = new ArrayList<>();
-    }
-
-    public ClassesTable(List<VMClass> parsedClasses) {
-        classList = parsedClasses;
+        handlesMap = new HashMap<>();
+        count = 0;
     }
     
     public void addClass(VMClass clazz) {
         classList.add(clazz);
+        handlesMap.put(clazz.name, count++);
     }
     
     public List<VMClass> getClasses() {
         return classList;
+    }
+    
+    public int getClassHandle(String className) {
+        return handlesMap.get(className);
+    }
+    
+    public VMClass getClassByHandle(int handle) {
+        return classList.get(handle);
+    }
+
+    public Map<String, Integer> getClassesHandles() {
+        return handlesMap;
     }
 }

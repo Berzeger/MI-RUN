@@ -2,6 +2,7 @@ package vm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import org.apache.bcel.classfile.ConstantUtf8;
 import static vm.Bytecode.*;
@@ -217,8 +218,8 @@ public class VM {
         return stack;
     }
     
-    public List<VMClass> getClassesTable() {
-        return classesTable.getClasses();
+    public ClassesTable getClassesTable() {
+        return classesTable;
     }
     
     public List<VMMethod> getMethodsTable() {

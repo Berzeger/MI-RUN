@@ -20,5 +20,4 @@ public class VMClass {
     public VMClass superClass;
     public String superClassName;
     public VMConstantPool constantPool;
-
 }
