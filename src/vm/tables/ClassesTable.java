@@ -46,4 +46,8 @@ public class ClassesTable {
     public Map<String, Integer> getClassesHandles() {
         return handlesMap;
     }
+    
+    public VMClass getClassByName(String name) {
+        return getClassByHandle(getClassHandle(name));
+    }
 }
