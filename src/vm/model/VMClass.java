@@ -20,6 +20,7 @@ public class VMClass {
     public List<VMField> fields;
     public List<VMMethod> methods;
     public VMClass superVMClass;
+    public String superClassName;
     public VMConstantPool constantPool;
 
     public void setSuperClass(VMClass superVMClass) {
@@ -51,7 +52,7 @@ public class VMClass {
 		if (pointer == 0) {
 		    currentArgsClassNames[i] = "";
 		} else {
-		    currentArgsClassNames[i] = vm.getHeap().loadObject(pointer).name;
+		    currentArgsClassNames[i] = vm.getHeap().loadClass(pointer).name;
 		}
 	    } else {
 		currentArgsClassNames[i] = "Integer";

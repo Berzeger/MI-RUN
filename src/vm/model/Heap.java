@@ -32,7 +32,7 @@ public class Heap {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    Object loadObject(int pointer) {
+    VMClass loadClass(int pointer) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
