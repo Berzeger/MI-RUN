@@ -136,7 +136,7 @@ public class BytecodeReader {
                 classToSave.fields.add(parseField(field));
             }
 
-            classToSave.superClassName = bcelClass.getSuperclassName();
+            classToSave.superVMClass.name = bcelClass.getSuperclassName();
             classToSave.constantPool = parseConstantPool(bcelClass);
 
             for (Method method : bcelClass.getMethods()) {
@@ -234,9 +234,9 @@ public class BytecodeReader {
 
     private void loadSuperClasses() {
         for (VMClass clazz : virtualMachine.getClassesTable().getClasses()) {
-            int superClassHandle = virtualMachine.getClassesTable().getClassHandle(clazz.superClassName);
+            int superClassHandle = virtualMachine.getClassesTable().getClassHandle(clazz.superVMClass.name);
             VMClass superclass = virtualMachine.getClassesTable().getClassByHandle(superClassHandle);
-            clazz.superClass = superclass;   
+            clazz.superVMClass = superclass;   
         }
     }
 }
