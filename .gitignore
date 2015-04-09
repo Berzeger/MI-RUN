@@ -1,5 +1,5 @@
 *.class
-!/lib/examples/*
+!/lib/custom/*
 !/lib/java/*
 
 # Mobile Tools for Java (J2ME)
