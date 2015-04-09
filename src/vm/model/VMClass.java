@@ -111,9 +111,7 @@ public class VMClass {
         for (int i = 0; i < method.arguments.size(); i++) {
             String argClassName = method.arguments.get(i).className;
             if (!argClassName.equals(argsNames[i])) {
-                if (isClassNameSuperClass(argClassName)) {
-                    continue;
-                } else {
+                if (!isClassNameSuperClass(argClassName)) {
                     VMClass clazz;
                     try {
                         clazz = vm.getClassesTable().getClassByName(argClassName);
