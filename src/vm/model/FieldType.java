@@ -37,5 +37,4 @@ public enum FieldType {
     public byte getIdentByte() {
 	return identByte;
     }
-
 }

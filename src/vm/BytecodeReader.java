@@ -49,7 +49,7 @@ public class BytecodeReader {
      * Attribute count (2 bytes) Attribute table (variable size)
      */
     private ClassParser cParser;
-    private JavaClass clazz;
+    private JavaClass bcelClass;
     private final VM virtualMachine;
 
     public BytecodeReader(VM virtualMachine) {
@@ -66,7 +66,7 @@ public class BytecodeReader {
 
             // Custom classes
             // For each file in directory
-            Files.walk(Paths.get("./examples")).forEach(filePath -> {
+            Files.walk(Paths.get("./lib/custom")).forEach(filePath -> {
                 // Is it a class file?
                 if (FilenameUtils.getExtension(filePath.toString()).equals("class")) {
                     parseClass(filePath.toString());
@@ -78,7 +78,7 @@ public class BytecodeReader {
             // I'll keep this here just for future references
             // as how to read method bytecode
             /*
-             for (Method method : clazz.getMethods()) {
+             for (Method method : bcelClass.getMethods()) {
              System.out.println(method);
              //System.out.println(-79 & 0xFF);
              // TODO: Figure out why there are negative integers in the code
@@ -126,20 +126,20 @@ public class BytecodeReader {
 
         try {
             cParser = new ClassParser(filePath);
-            clazz = cParser.parse();
-            // int address - dafuq is this?
-            classToSave.name = clazz.getClassName();
+            bcelClass = cParser.parse();
+            
+            classToSave.name = bcelClass.getClassName();
             classToSave.fields = new ArrayList<>();
             classToSave.methods = new ArrayList<>();
 
-            for (Field field : clazz.getFields()) {
+            for (Field field : bcelClass.getFields()) {
                 classToSave.fields.add(parseField(field));
             }
 
-            classToSave.superClassName = clazz.getSuperclassName();
-            classToSave.constantPool = parseConstantPool(clazz);
+            classToSave.superClassName = bcelClass.getSuperclassName();
+            classToSave.constantPool = parseConstantPool(bcelClass);
 
-            for (Method method : clazz.getMethods()) {
+            for (Method method : bcelClass.getMethods()) {
                 VMMethod meth = parseMethod(method, classToSave);
                 classToSave.methods.add(meth);
                 virtualMachine.getMethodsTable().add(meth);
@@ -218,12 +218,12 @@ public class BytecodeReader {
             Constant cPoolConstant = clazz.getConstantPool().getConstant(i);
 
             if (cPoolConstant instanceof ConstantString) {
-                CPType type = CPType.STRING;
                 String value = (((ConstantString) cPoolConstant).getBytes(clazz.getConstantPool()));
                 cPool.addItem(new VMCPoolItem(CPType.STRING, value));
                 // Does the following else if ever trigger? Doesn't seem to.
+                // Or maybe it does. Sometimes. WTF. Gotta read something
+                // 'bout saving int constants. When does it do that? 
             } else if (cPoolConstant instanceof ConstantInteger) {
-                CPType type = CPType.INT;
                 int value = ((ConstantInteger) cPoolConstant).getBytes();
                 cPool.addItem(new VMCPoolItem(CPType.INT, Integer.toString(value)));
             }

@@ -14,7 +14,5 @@ public class VMField {
 	this.name = name;
 	this.type = type;
 	this.className = className;
-
     }
-
 }
