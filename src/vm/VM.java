@@ -2,10 +2,9 @@ package vm;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
-import org.apache.bcel.classfile.ConstantUtf8;
 import static vm.Bytecode.*;
+import vm.model.Heap;
 import vm.model.VMClass;
 import vm.model.VMField;
 import vm.model.VMMethod;
@@ -32,6 +31,7 @@ public class VM {
     Bytecode bytecode; // bytecode constants etc
     ClassesTable classesTable;
     MethodsTable methodsTable;
+    Heap heap;
 
     public boolean debug = false;
 
@@ -43,6 +43,7 @@ public class VM {
         this.ip = main;
         globals = new int[datasize];
         stack = new Stack<>();
+        heap = new Heap(this, 1024);
         classesTable = new ClassesTable();
         methodsTable = new MethodsTable();
         bcReader = new BytecodeReader(this);
@@ -216,6 +217,10 @@ public class VM {
     
     public Stack<Integer> getStack() {
         return stack;
+    }
+    
+    public Heap getHeap() {
+        return heap;
     }
     
     public ClassesTable getClassesTable() {

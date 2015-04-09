@@ -51,7 +51,7 @@ public class VMClass {
 		if (pointer == 0) {
 		    currentArgsClassNames[i] = "";
 		} else {
-		    currentArgsClassNames[i] = vm.heap.loadObject(pointer).name;
+		    currentArgsClassNames[i] = vm.getHeap().loadObject(pointer).name;
 		}
 	    } else {
 		currentArgsClassNames[i] = "Integer";

@@ -1,6 +1,5 @@
 package vm.model;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import vm.VM;
 
 /**
@@ -30,6 +29,10 @@ public class Heap {
     }
     
     public int alloc(VMClass clazz, int size, byte[] content) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    Object loadObject(int pointer) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
