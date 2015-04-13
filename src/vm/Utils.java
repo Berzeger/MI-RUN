@@ -39,12 +39,26 @@ public class Utils {
 	return bytes[from] << 24 | (bytes[from + 1] & 0xFF) << 16 | (bytes[from + 2] & 0xFF) << 8 | (bytes[from + 3] & 0xFF);
     }
 
+    public static byte[] getField(byte[] where, int objectAddress, int fieldIndex) {
+        byte[] value = new byte[4]; // type size, need to replace it for a constant when I stop being a lazy fuck.
+        int start = fieldIndex * 4 + objectAddress + 8;
+        
+        System.arraycopy(where, start, value, 0, 4); // replace the bloody constant already, will ya?
+        return value;
+    }
+    
     public static void setField(byte[] where, int objectAddress, int fieldIndex, byte[] value) {
         // field offset + object offset + object header
         int start = fieldIndex * 4 + objectAddress + 8;
         
         // copy field value to heap
         System.arraycopy(value, 0, where, objectAddress, value.length);
+    }
+    
+    // do we need this?
+    public static int getIntField(byte[] where, int objectAddress, int fieldIndex) {
+        byte[] value = getField(where, objectAddress, fieldIndex);
+        return byteArrayToInt(value, 0);
     }
     
     public static void setIntField(byte[] where, int objectAddress, int fieldIndex, int value) {
@@ -57,4 +71,6 @@ public class Utils {
         byte[] byteValue = intToByteArray(createPointer(value));
         setField(where, objectAddress, fieldIndex, byteValue);
     }
+    
+    
 }
