@@ -54,7 +54,7 @@ public final class Heap {
         // Fields length
         saveInt(size);
         
-        // Allocate the physical space. Will be filled with data on-fly
+        // Allocate the physical space. Will be filled with data when processing actual instructions.
         while (content > 0) {
             saveInt(0);
             content--;

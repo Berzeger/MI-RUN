@@ -39,4 +39,22 @@ public class Utils {
 	return bytes[from] << 24 | (bytes[from + 1] & 0xFF) << 16 | (bytes[from + 2] & 0xFF) << 8 | (bytes[from + 3] & 0xFF);
     }
 
+    public static void setField(byte[] where, int objectAddress, int fieldIndex, byte[] value) {
+        // field offset + object offset + object header
+        int start = fieldIndex * 4 + objectAddress + 8;
+        
+        // copy field value to heap
+        System.arraycopy(value, 0, where, objectAddress, value.length);
+    }
+    
+    public static void setIntField(byte[] where, int objectAddress, int fieldIndex, int value) {
+        // na createInt a createPointer se musíme zeptat Jirky ještě
+        byte[] byteValue = intToByteArray(createInt(value));
+        setField(where, objectAddress, fieldIndex, byteValue);
+    }
+    
+    public static void setPointerField(byte[] where, int objectAddress, int fieldIndex, int value) {
+        byte[] byteValue = intToByteArray(createPointer(value));
+        setField(where, objectAddress, fieldIndex, byteValue);
+    }
 }

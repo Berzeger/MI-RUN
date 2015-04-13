@@ -139,5 +139,14 @@ public class VMClass {
         return rate;
     }
 
-
+    public int getFieldIndex(String name) {
+        for (VMField field : fields) {
+            if (field.name.equals(name)) {
+                return fields.indexOf(field);
+            }
+        }
+        
+        // field not found
+        return -1;
+    }
 }
