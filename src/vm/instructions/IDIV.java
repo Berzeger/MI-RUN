@@ -11,9 +11,9 @@ public class IDIV extends Instruction {
     @Override
     public void execute(VM vm) {
         // divide the top operand by the operand below
-        int operand1 = vm.getStack().pop();
-        int operand2 = vm.getStack().pop();
-        vm.getStack().push(operand2 / operand1);
+        int operand1 = vm.getStack().popInt();
+        int operand2 = vm.getStack().popInt();
+        vm.getStack().pushInt(operand2 / operand1);
     }
 
 }

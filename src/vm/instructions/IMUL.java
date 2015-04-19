@@ -10,8 +10,8 @@ public class IMUL extends Instruction {
 
     @Override
     public void execute(VM vm) {
-        int operand1 = vm.getStack().pop();
-        int operand2 = vm.getStack().pop();
-        vm.getStack().push(operand1 * operand2);
+        int operand1 = vm.getStack().popInt();
+        int operand2 = vm.getStack().popInt();
+        vm.getStack().pushInt(operand1 * operand2);
     }
 }

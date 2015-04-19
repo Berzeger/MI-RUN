@@ -11,8 +11,8 @@ public class ISUB extends Instruction {
     @Override
     public void execute(VM vm) {
         // subtract the top operand from the operand below
-        int operand1 = vm.getStack().pop();
-        int operand2 = vm.getStack().pop();
-        vm.getStack().push(operand2 - operand1);
+        int operand1 = vm.getStack().popInt();
+        int operand2 = vm.getStack().popInt();
+        vm.getStack().pushInt(operand2 - operand1);
     }
 }

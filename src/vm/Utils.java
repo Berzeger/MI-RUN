@@ -39,6 +39,14 @@ public class Utils {
 	return bytes[from] << 24 | (bytes[from + 1] & 0xFF) << 16 | (bytes[from + 2] & 0xFF) << 8 | (bytes[from + 3] & 0xFF);
     }
 
+    public static byte[] getValue(byte[] where, int from) {
+        byte[] value = new byte[4]; // constant - fix
+        for (int i = 0; i < value.length; i++) {
+            value[i] = where[i + from];
+        }
+        return value;
+    }
+    
     public static byte[] getField(byte[] where, int objectAddress, int fieldIndex) {
         byte[] value = new byte[4]; // type size, need to replace it for a constant when I stop being a lazy fuck.
         int start = fieldIndex * 4 + objectAddress + 8;

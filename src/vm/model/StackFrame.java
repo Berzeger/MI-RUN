@@ -14,7 +14,7 @@ import vm.Utils;
 public class StackFrame {
 
     private final byte[] content;
-    private int offset = 0;
+    private int pointer = 0;
     public VMMethod actualMethod;
 
     public StackFrame(int contentSize) {
@@ -32,7 +32,7 @@ public class StackFrame {
 	pushInt(returnAddress);
 
 	// 1 - n (args + other locals)
-	offset += (lookupReturn.method.arguments.size() + lookupReturn.method.locals.size()) * FieldType.TYPE_BYTE_SIZE;
+	pointer += (lookupReturn.method.arguments.size() + lookupReturn.method.locals.size()) * FieldType.TYPE_BYTE_SIZE;
 
 	// current frame is the caller frame
 	for (int i = 0; i < lookupReturn.args.length; i++) {
@@ -53,7 +53,7 @@ public class StackFrame {
 	pushPointer(objectPointer);
 
 	// 1 - n (args + other locals)
-	offset += (lookupReturn.method.arguments.size() + lookupReturn.method.locals.size()) * FieldType.TYPE_BYTE_SIZE;
+	pointer += (lookupReturn.method.arguments.size() + lookupReturn.method.locals.size()) * FieldType.TYPE_BYTE_SIZE;
 
 	// current frame is the caller frame
 	for (int i = 0; i < lookupReturn.args.length; i++) {
@@ -72,15 +72,22 @@ public class StackFrame {
 
     public void push(byte[] bytes) {
 	for (byte b : bytes) {
-	    content[offset++] = b;
+	    content[pointer++] = b;
 	}
     }
 
     public void setLocalValue(int index, byte[] value) {
 	int valueStart = index * FieldType.TYPE_BYTE_SIZE + FieldType.TYPE_BYTE_SIZE;
-	for (int i = 0; i < value.length; i++) {
-	    content[i + valueStart] = value[i];
-	}
+        System.arraycopy(value, 0, content, valueStart, value.length);
+    }
+
+    private byte[] pop() {
+        pointer -= 4; // constant - fix it
+        return Utils.getValue(content, pointer);
+    }
+    
+    public int popInt() {
+        return Utils.fieldTypeToInt(Utils.byteArrayToInt(pop(), 0));
     }
 
 }

@@ -10,6 +10,6 @@ public class ICONST_0 extends Instruction {
 
     @Override
     public void execute(VM vm) {
-        vm.getStack().push(0);
+        vm.getStack().pushInt(0);
     }
 }

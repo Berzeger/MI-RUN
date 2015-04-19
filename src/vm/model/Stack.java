@@ -36,7 +36,14 @@ public class Stack {
 	    frame = new StackFrame(stackFrameSize, returnAddress, lr);
 	}
 	stackFrames[++currentFrameIndex] = frame;
-
+    }
+    
+    public int popInt() {
+        return getCurrentStackFrame().popInt();
+    }
+    
+    public void pushInt(int value) {
+        getCurrentStackFrame().pushInt(value);
     }
 
     private StackFrame getCurrentStackFrame() {

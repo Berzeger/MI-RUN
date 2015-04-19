@@ -2,9 +2,9 @@ package vm;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 import static vm.Bytecode.*;
 import vm.model.Heap;
+import vm.model.Stack;
 import vm.model.VMClass;
 import vm.model.VMField;
 import vm.model.VMMethod;
@@ -21,7 +21,7 @@ public class VM {
 
     int[] globals;
     int[] code;
-    Stack<Integer> stack;
+    Stack stack;
 
     int ip; // Instruction Pointer
     int sp = -1; // Stack Pointer
@@ -42,7 +42,7 @@ public class VM {
         this.code = code;
         this.ip = main;
         globals = new int[datasize];
-        stack = new Stack<>();
+        stack = new Stack(256, 256);
         heap = new Heap(this, 1024);
         classesTable = new ClassesTable();
         methodsTable = new MethodsTable();
@@ -215,7 +215,7 @@ public class VM {
         System.err.println();
     }
     
-    public Stack<Integer> getStack() {
+    public Stack getStack() {
         return stack;
     }
     
