@@ -90,4 +90,7 @@ public class StackFrame {
         return Utils.fieldTypeToInt(Utils.byteArrayToInt(pop(), 0));
     }
 
+    public int popPointer() {
+        return popInt();
+    }
 }

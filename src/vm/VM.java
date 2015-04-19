@@ -9,6 +9,7 @@ import vm.model.VMClass;
 import vm.model.VMField;
 import vm.model.VMMethod;
 import vm.tables.ClassesTable;
+import vm.tables.InstructionsTable;
 import vm.tables.MethodsTable;
 
 /**
@@ -31,6 +32,7 @@ public class VM {
     Bytecode bytecode; // bytecode constants etc
     ClassesTable classesTable;
     MethodsTable methodsTable;
+    InstructionsTable instructionsTable;
     Heap heap;
 
     public boolean debug = false;
@@ -46,6 +48,7 @@ public class VM {
         heap = new Heap(this, 1024);
         classesTable = new ClassesTable();
         methodsTable = new MethodsTable();
+        instructionsTable = new InstructionsTable();
         bcReader = new BytecodeReader(this);
         bytecode = new Bytecode();
     }
@@ -82,6 +85,8 @@ public class VM {
 
     public void run() {
         printDebugInfo();
+        VMClass mainClass = getMainClass();
+        int address = getHeap().allocClass(mainClass);
         
         loop:
         while (ip < code.length) {
@@ -229,5 +234,21 @@ public class VM {
     
     public List<VMMethod> getMethodsTable() {
         return methodsTable.getMethods();
+    }
+    
+    public InstructionsTable getInstructionsTable() {
+        return instructionsTable;
+    }
+
+    private VMClass getMainClass() {
+        for (VMClass clazz : getClassesTable().getClasses()) {
+            for (VMMethod method : getMethodsTable()) {
+                if (method.isStatic && method.name.equals("main") && !method.clazz.name.startsWith("java.")) {
+                    return clazz;
+                }
+            }
+        }
+        
+        throw new RuntimeException("Main class not found.");
     }
 }

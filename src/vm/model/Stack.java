@@ -45,6 +45,14 @@ public class Stack {
     public void pushInt(int value) {
         getCurrentStackFrame().pushInt(value);
     }
+    
+    public int popPointer() {
+        return popInt();
+    }
+    
+    public void pushPointer(int value) {
+        getCurrentStackFrame().pushPointer(value);
+    }
 
     private StackFrame getCurrentStackFrame() {
 	if (currentFrameIndex < 0) {

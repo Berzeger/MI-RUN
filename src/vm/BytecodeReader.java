@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.Constant;
 import org.apache.bcel.classfile.ConstantInteger;
@@ -16,6 +19,9 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.LocalVariable;
 import org.apache.bcel.classfile.LocalVariableTable;
 import org.apache.bcel.classfile.Method;
+import org.apache.bcel.generic.BranchInstruction;
+import org.apache.bcel.generic.Instruction;
+import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Type;
 import static org.apache.bcel.generic.Type.INT;
 import static org.apache.bcel.generic.Type.VOID;
@@ -26,10 +32,12 @@ import vm.model.VMCPoolItem.CPType;
 import vm.model.VMClass;
 import vm.model.VMConstantPool;
 import vm.model.VMField;
+import vm.model.VMInstruction;
 import vm.model.VMMethod;
 import vm.parsers.ArgumentParser;
 import vm.parsers.LocalVariableParser;
 import vm.parsers.Parser;
+import vm.tables.InstructionsTable;
 
 /**
  *
@@ -52,6 +60,11 @@ public class BytecodeReader {
     private JavaClass bcelClass;
     private final VM virtualMachine;
 
+    /**
+     * pattern for instructions with parameters
+     */
+    private static Pattern insPattern = Pattern.compile(".*\\[\\d+\\]\\(\\d+\\)\\s(\\w+)+");  // For example: invokestatic[184](3) 5
+    
     public BytecodeReader(VM virtualMachine) {
         this.virtualMachine = virtualMachine;
         try {
@@ -165,7 +178,7 @@ public class BytecodeReader {
         meth.arguments = parseVariables(method, new ArgumentParser());
         meth.locals = parseVariables(method, new LocalVariableParser());
         meth.returnType = translateType(method.getReturnType());
-        meth.instructionPointer = 0;
+        meth.instructionPointer = parseInstructions(method, clazz, bcelClass);
         meth.clazz = clazz;
         meth.isStatic = method.isStatic();
         meth.isNative = method.isNative();
@@ -231,6 +244,47 @@ public class BytecodeReader {
 
         return cPool;
     }
+    
+    private int parseInstructions(Method method, VMClass clazz, JavaClass jc) {
+        int instructionPointer = -1;
+        if (method.getCode() != null) {
+            org.apache.bcel.generic.InstructionList instructions = new org.apache.bcel.generic.InstructionList(method.getCode().getCode());
+
+            for (InstructionHandle ih : instructions.getInstructionHandles()) {
+
+                VMInstruction instruction = new VMInstruction();
+                List<String> insParams = new LinkedList<>();
+                Instruction i = ih.getInstruction();
+                if(i instanceof BranchInstruction) {
+                    InstructionHandle targetIh = ((BranchInstruction) i).getTarget();
+                    insParams.add(String.valueOf(targetIh.getPosition()));
+                    instruction.isBranchInstruction = true;
+                } else {
+                    Matcher matcher = insPattern.matcher(i.toString(true));
+                    if(matcher.find()) {
+                        for(int index = 1; index <= matcher.groupCount(); index++) {
+                            insParams.add(matcher.group(index));
+                        }
+                    }
+                }
+                instruction.name = i.getName();
+                instruction.args = insParams.toArray(new String[insParams.size()]);
+                instruction.originPosition = ih.getPosition();
+
+                ConstantPoolTranslator.translateInstruction(instruction, clazz, jc);
+                int position = virtualMachine.getInstructionsTable().addInstruction(instruction);
+                if (instructionPointer < 0) {
+                    instructionPointer = position;
+                }
+            }
+        }
+
+        if (instructionPointer != -1) {
+            translateBranchPointers(instructionPointer, virtualMachine.getInstructionsTable());
+        }
+
+        return instructionPointer;
+    }    
 
     private void loadSuperClasses() {
         for (VMClass clazz : virtualMachine.getClassesTable().getClasses()) {
@@ -238,5 +292,9 @@ public class BytecodeReader {
             VMClass superclass = virtualMachine.getClassesTable().getClassByHandle(superClassHandle);
             clazz.superVMClass = superclass;   
         }
+    }
+
+    private void translateBranchPointers(int instructionPointer, InstructionsTable instructionsTable) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
