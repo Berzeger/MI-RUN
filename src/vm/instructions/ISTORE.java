@@ -8,9 +8,26 @@ import vm.VM;
  */
 public class ISTORE extends Instruction {
 
+    private int arg;
+    
+    public ISTORE() {
+        arg = -1;
+    }
+    public ISTORE(int arg) {
+        this.arg = arg;
+    }
+    
     @Override
     public void execute(VM vm, String[] args) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int operand;
+        
+        if (arg == -1) {
+            operand = Integer.parseInt(args[0]);
+        } else {
+            operand = arg;
+        }
+        
+        vm.getStack().setLocalInt(operand, vm.getStack().popInt());
     }
     
 }
