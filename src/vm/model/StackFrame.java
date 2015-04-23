@@ -106,4 +106,12 @@ public class StackFrame {
     public int popPointer() {
         return popInt();
     }
+
+    void setLocalPointer(int index, int value) {
+        setLocalValue(index, Utils.intToByteArray(Utils.createPointer(value)));
+    }
+
+    int getLocalPointer(int index) {
+        return getLocalInt(index);
+    }
 }

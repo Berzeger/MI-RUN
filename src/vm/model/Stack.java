@@ -62,12 +62,20 @@ public class Stack {
         getCurrentStackFrame().setLocalInt(index, value);
     }
     
+    public void setLocalPointer(int index, int value) {
+        getCurrentStackFrame().setLocalPointer(index, value);
+    }
+    
     public byte[] getLocalValue(int index) {
         return getCurrentStackFrame().getLocalValue(index);
     }
     
     public int getLocalInt(int index) {
         return getCurrentStackFrame().getLocalInt(index);
+    }
+    
+    public int getLocalPointer(int index) {
+        return getCurrentStackFrame().getLocalPointer(index);
     }
 
     private StackFrame getCurrentStackFrame() {

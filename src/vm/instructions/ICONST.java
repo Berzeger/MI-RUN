@@ -12,7 +12,7 @@ import vm.VM;
  * @author Filip
  */
 public class ICONST extends Instruction {
-    int arg;
+    private final int arg;
     
     public ICONST(int arg) {
         this.arg = arg;

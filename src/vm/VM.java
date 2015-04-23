@@ -33,7 +33,7 @@ public class VM {
     public boolean debug = false;
 
     public VM() {
-        stack = new Stack(256, 256);
+        stack = new Stack(64, 1024);
         heap = new Heap(this, 1024);
         classesTable = new ClassesTable();
         methodsTable = new MethodsTable();

@@ -13,8 +13,5 @@ public class IADD extends Instruction {
         int operand1 = vm.getStack().popInt();
         int operand2 = vm.getStack().popInt();
         vm.getStack().pushInt(operand1 + operand2);
-        System.out.println(operand1 + operand2);
-        System.out.println(operand1);
-        System.out.println(operand2);
     }
 }
