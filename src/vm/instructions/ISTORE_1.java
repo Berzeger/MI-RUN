@@ -9,8 +9,9 @@ import vm.VM;
 public class ISTORE_1 extends Instruction {
 
     @Override
-    public void execute(VM vm) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void execute(VM vm, String[] args) {
+        int operand = vm.getStack().popInt();
+        System.out.println("operand istore: " + operand);
+        vm.getStack().setLocalInt(1, operand);
     }
-    
 }

@@ -9,8 +9,9 @@ import vm.VM;
 public class ISTORE_3 extends Instruction {
 
     @Override
-    public void execute(VM vm) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void execute(VM vm, String[] args) {
+        vm.getStack().setLocalInt(3, vm.getStack().popInt());
+
     }
-    
+
 }

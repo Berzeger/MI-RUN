@@ -9,7 +9,7 @@ import vm.VM;
 public class IDIV extends Instruction {
 
     @Override
-    public void execute(VM vm) {
+    public void execute(VM vm, String[] args) {
         // divide the top operand by the operand below
         int operand1 = vm.getStack().popInt();
         int operand2 = vm.getStack().popInt();

@@ -53,12 +53,27 @@ public class Stack {
     public void pushPointer(int value) {
         getCurrentStackFrame().pushPointer(value);
     }
+    
+    public void setLocalValue(int index, byte[] value) {
+        getCurrentStackFrame().setLocalValue(index, value);
+    }
+    
+    public void setLocalInt(int index, int value) {
+        getCurrentStackFrame().setLocalInt(index, value);
+    }
+    
+    public byte[] getLocalValue(int index) {
+        return getCurrentStackFrame().getLocalValue(index);
+    }
+    
+    public int getLocalInt(int index) {
+        return getCurrentStackFrame().getLocalInt(index);
+    }
 
     private StackFrame getCurrentStackFrame() {
 	if (currentFrameIndex < 0) {
 	    return null;
 	}
 	return stackFrames[currentFrameIndex];
-    }
-
+    }    
 }

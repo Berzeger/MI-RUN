@@ -32,7 +32,14 @@ public class InstructionsTable {
      * @return
      */
     public VMInstruction nextInstruction() {
-        return instructions.get(programCounter++);
+        VMInstruction instruction;
+        try {
+            instruction = instructions.get(programCounter++);
+        } catch (IndexOutOfBoundsException ex) {
+            return null;
+        }
+        
+        return instruction;
     }
 
     /**

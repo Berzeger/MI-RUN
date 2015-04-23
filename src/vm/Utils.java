@@ -80,5 +80,11 @@ public class Utils {
         setField(where, objectAddress, fieldIndex, byteValue);
     }
     
-    
+    public static byte[] subArray(byte[] where, int from, int size) {
+        byte[] val = new byte[size];
+        for (int i = 0; i < size; i++) {
+            val[i] = where[from + i];
+        }
+        return val;
+    }
 }

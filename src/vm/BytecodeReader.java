@@ -63,7 +63,7 @@ public class BytecodeReader {
     /**
      * pattern for instructions with parameters
      */
-    private static Pattern insPattern = Pattern.compile(".*\\[\\d+\\]\\(\\d+\\)\\s(\\w+)+");  // For example: invokestatic[184](3) 5
+    private static final Pattern insPattern = Pattern.compile(".*\\[\\d+\\]\\(\\d+\\)\\s(\\w+)+");  // For example: invokestatic[184](3) 5
     
     public BytecodeReader(VM virtualMachine) {
         this.virtualMachine = virtualMachine;
@@ -150,8 +150,9 @@ public class BytecodeReader {
             }
 
             classToSave.superClassName = bcelClass.getSuperclassName();
-            classToSave.constantPool = parseConstantPool(bcelClass);
-
+            //classToSave.constantPool = parseConstantPool(bcelClass);
+            classToSave.constantPool = new VMConstantPool();
+            
             for (Method method : bcelClass.getMethods()) {
                 VMMethod meth = parseMethod(method, classToSave);
                 classToSave.methods.add(meth);
@@ -181,7 +182,7 @@ public class BytecodeReader {
         meth.instructionPointer = parseInstructions(method, clazz, bcelClass);
         meth.clazz = clazz;
         meth.isStatic = method.isStatic();
-        meth.isNative = method.isNative();
+        meth.isNative = method.isNative();     
         return meth;
     }
 
@@ -192,7 +193,6 @@ public class BytecodeReader {
         if (varTable != null) {
             for (int i = 0; i < varTable.getTableLength(); i++) {
                 LocalVariable var = varTable.getLocalVariable(i);
-                // If this doesn't work, look at LocalVariableProcessor and ArgumentVariableProcessor
                 if (!parser.canParse(method, var, i)) {
                     continue;
                 }
@@ -200,8 +200,8 @@ public class BytecodeReader {
             }
         } else if (method.getName().equalsIgnoreCase("<init>") || method.isNative()) {
             Type[] types = method.getArgumentTypes();
-            for (int i = 0; i < types.length; i++) {
-                variables.add(new VMField("wtf", getArgumentTypeType(types[i]), getClass(types[i].getSignature())));
+            for (Type type : types) {
+                variables.add(new VMField("wtf", getArgumentTypeType(type), getClass(type.getSignature())));
             }
         }
 
@@ -209,18 +209,19 @@ public class BytecodeReader {
     }
 
     private String getClass(String signature) {
-        if (signature.equals("I")) {
-            return "Integer";
-        } else if (signature.equals("[B")) {
-            return "java.lang.Array";
-        } else {
-            signature = signature.replace("[L", "").replace(";", "").replace("/", ".");
-
-            if (signature.startsWith("L")) {
-                signature = signature.substring(1);
-            }
-
-            return signature;
+        switch (signature) {
+            case "I":
+                return "Integer";
+            case "[B":
+                return "java.lang.Array";
+            default:
+                signature = signature.replace("[L", "").replace(";", "").replace("/", ".");
+                
+                if (signature.startsWith("L")) {
+                    signature = signature.substring(1);
+                }
+                
+                return signature;
         }
     }
 
@@ -282,7 +283,7 @@ public class BytecodeReader {
         if (instructionPointer != -1) {
             translateBranchPointers(instructionPointer, virtualMachine.getInstructionsTable());
         }
-
+        
         return instructionPointer;
     }    
 
@@ -294,7 +295,26 @@ public class BytecodeReader {
         }
     }
 
-    private void translateBranchPointers(int instructionPointer, InstructionsTable instructionsTable) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void translateBranchPointers(int fromInstructionPointer, InstructionsTable instructionList) {
+        for (int i = fromInstructionPointer; i < instructionList.instructions.size(); i++) {
+            VMInstruction instruction = instructionList.instructions.get(i);
+            if (instruction.isBranchInstruction) {
+                int param = Integer.parseInt(instruction.args[0]);
+                int newPointer = findInstructionPositionByOriginPointer(param, fromInstructionPointer, instructionList);
+                if (newPointer != -1) {
+                     instruction.args[0] = String.valueOf(newPointer);
+                }
+            }
+        }
+    }
+
+    private int findInstructionPositionByOriginPointer(int originPointer, int fromInstructionPointer, InstructionsTable instructionList) {
+        for (int i = fromInstructionPointer; i < instructionList.instructions.size(); i++) {
+            VMInstruction instruction = instructionList.instructions.get(i);
+            if (instruction.originPosition == originPointer) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

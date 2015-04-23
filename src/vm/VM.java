@@ -7,6 +7,7 @@ import vm.model.Heap;
 import vm.model.Stack;
 import vm.model.VMClass;
 import vm.model.VMField;
+import vm.model.VMInstruction;
 import vm.model.VMMethod;
 import vm.tables.ClassesTable;
 import vm.tables.InstructionsTable;
@@ -54,7 +55,7 @@ public class VM {
     }
     
     private void printDebugInfo() {
-        if (debug) {
+        if (debug) {/*
             for (VMClass clazz : classesTable.getClasses()) {
                 System.err.println("Class name: " + clazz.name + ", superclass: " + clazz.superClassName);    
                 
@@ -79,7 +80,7 @@ public class VM {
                         System.err.println("\t\tcPoolItem type: " + clazz.constantPool.getItem(i).getType() + ", cPoolItem value: " + clazz.constantPool.getItem(i).getValue());  
                     }
                 }
-            }
+            }*/
         }
     }
 
@@ -88,15 +89,16 @@ public class VM {
         VMClass mainClass = getMainClass();
         int address = getHeap().allocClass(mainClass);
         
-        loop:
-        while (ip < code.length) {
-            int opcode = code[ip]; // Fetch the first instruction
+        VMInstruction instruction;
+        while ((instruction = getInstructionsTable().nextInstruction()) != null) {
+            InstructionProcessor.execute(this, instruction);
+           /* int opcode = code[ip]; // Fetch the first instruction
             if (debug) {
                 System.err.printf("%-35s", disassemble());
             }
             ip++;
 
-            executeOpcode(opcode);
+            executeOpcode(opcode);*/
 
             /*
              case ICONST:
@@ -124,18 +126,15 @@ public class VM {
              case HALT:
              break loop;
              */
-            if (debug) {
-                System.err.println(stackString());
-            }
         }
-
+/*
         if (debug) {
             if (ip < code.length) {
                 System.err.printf("%-35s", disassemble());
             }
             System.err.println(stackString());
             dumpDataMemory();
-        }
+        }*/
     }
 
     private void executeOpcode(int opcode) {
@@ -143,7 +142,7 @@ public class VM {
          *  (x) Create a class for Stack. Allow it to be popped while simultaneously working with sp. Maybe default Java Stack would be enough?
          *  Create Instruction class with a constructor taking globals ArrayList, code ArrayList and stack Stack
          *  Each method will have it's own bytearray - we need to have an ip for each of them - need to think that thru
-         */
+         *//*
         switch (opcode) {
             case ICONST_M1:
                 new vm.instructions.ICONST_M1().execute(this);
@@ -178,7 +177,7 @@ public class VM {
             case IMUL:
                 new vm.instructions.IMUL().execute(this);
                 break;
-        }
+        }*/
     }
 
     private String disassemble() {

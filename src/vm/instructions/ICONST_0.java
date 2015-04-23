@@ -9,7 +9,7 @@ import vm.VM;
 public class ICONST_0 extends Instruction {
 
     @Override
-    public void execute(VM vm) {
+    public void execute(VM vm, String[] args) {
         vm.getStack().pushInt(0);
     }
 }

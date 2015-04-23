@@ -9,7 +9,7 @@ import vm.VM;
 public class ISTORE extends Instruction {
 
     @Override
-    public void execute(VM vm) {
+    public void execute(VM vm, String[] args) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
