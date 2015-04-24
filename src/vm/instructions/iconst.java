@@ -11,10 +11,10 @@ import vm.VM;
  *
  * @author Filip
  */
-public class ICONST extends Instruction {
+public class iconst extends Instruction {
     private final int arg;
     
-    public ICONST(int arg) {
+    public iconst(int arg) {
         this.arg = arg;
     }
     

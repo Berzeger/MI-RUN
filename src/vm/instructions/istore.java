@@ -4,16 +4,16 @@ import vm.VM;
 
 /**
  *
- * @author Filip
+ * @author Filip Vondrášek (filip at vondrasek.net)
  */
-public class ASTORE extends Instruction {
+public class istore extends Instruction {
 
     private final int arg;
     
-    public ASTORE() {
+    public istore() {
         arg = -1;
     }
-    public ASTORE(int arg) {
+    public istore(int arg) {
         this.arg = arg;
     }
     
@@ -27,7 +27,7 @@ public class ASTORE extends Instruction {
             operand = arg;
         }
         
-        vm.getStack().setLocalPointer(operand, vm.getStack().popPointer());
+        vm.getStack().setLocalInt(operand, vm.getStack().popInt());
     }
     
 }

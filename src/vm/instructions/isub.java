@@ -6,7 +6,7 @@ import vm.VM;
  *
  * @author Filip Vondrášek (filip at vondrasek.net)
  */
-public class ISUB extends Instruction {
+public class isub extends Instruction {
 
     @Override
     public void execute(VM vm, String[] args) {

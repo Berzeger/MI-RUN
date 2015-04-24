@@ -11,15 +11,15 @@ import vm.VM;
  *
  * @author Filip
  */
-public class ALOAD extends Instruction {
+public class iload extends Instruction {
 
     private final int arg;
     
-    public ALOAD() {
+    public iload() {
         arg = -1;
     }
     
-    public ALOAD(int arg) {
+    public iload(int arg) {
         this.arg = arg;
     }
     
@@ -28,11 +28,11 @@ public class ALOAD extends Instruction {
         int operand;
         
         if (arg == -1) {
-            operand = vm.getStack().getLocalPointer(Integer.parseInt(args[0]));
+            operand = vm.getStack().getLocalInt(Integer.parseInt(args[0]));
         } else {
-            operand = vm.getStack().getLocalPointer(arg);
+            operand = vm.getStack().getLocalInt(arg);
         }
         
-        vm.getStack().pushPointer(operand);
-    }  
+        vm.getStack().pushInt(operand);
+    }    
 }
