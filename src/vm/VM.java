@@ -18,17 +18,13 @@ import vm.tables.MethodsTable;
  * @author Filip Vondrášek (filip at vondrasek.net)
  */
 public class VM {
-
-    final int STACK_SIZE = 100;
-
-    Stack stack;
-
-    BytecodeReader bcReader; // byte code reader
-    Bytecode bytecode; // bytecode constants etc
-    ClassesTable classesTable;
-    MethodsTable methodsTable;
-    InstructionsTable instructionsTable;
-    Heap heap;
+    private final Stack stack;
+    private final BytecodeReader bcReader; // byte code reader
+    private final Bytecode bytecode; // bytecode constants etc
+    private final ClassesTable classesTable;
+    private final MethodsTable methodsTable;
+    private final InstructionsTable instructionsTable;
+    private final Heap heap;
 
     public boolean debug = false;
 

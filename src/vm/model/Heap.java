@@ -29,7 +29,7 @@ public final class Heap {
         activeSpace = 0;
     }
 
-    private byte[] getSpace() {
+    public byte[] getSpace() {
         return activeSpace == 0 ? space1 : space2;
     }
 

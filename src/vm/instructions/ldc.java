@@ -24,7 +24,7 @@ public class ldc extends Instruction {
         if (item.getType() == VMCPoolItem.CPType.INT) {
             vm.getStack().pushInt(Integer.parseInt(item.getValue()));
         } else if (item.getType() == VMCPoolItem.CPType.STRING) {
-            // TODO: New string instruction
+            
         }
     }
     
