@@ -15,13 +15,15 @@ import vm.model.VMInstruction;
 public class InstructionProcessor {
 
     public static void execute(VM virtualMachine, VMInstruction instruction) {
-        Instruction inst = Bytecode.instructions.get(instruction.getName());
-        
-        // TODO: Check for null pointer somewhere else
-        if (inst != null) inst.execute(virtualMachine, instruction.getArgs());
-        
         if (virtualMachine.debug) {
             System.out.println("Instruction [" + instruction.originPosition + "]: " + instruction.toString());
+        }
+
+        Instruction inst = Bytecode.instructions.get(instruction.getName());
+
+        // TODO: Check for null pointer somewhere else
+        if (inst != null) {
+            inst.execute(virtualMachine, instruction.getArgs());
         }
     }
 }

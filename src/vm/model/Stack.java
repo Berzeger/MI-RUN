@@ -38,6 +38,12 @@ public class Stack {
 	stackFrames[++currentFrameIndex] = frame;
     }
     
+    public int deleteStackFrame() {
+        int retAddr = getCurrentStackFrame().getReturnAddress();
+        stackFrames[currentFrameIndex--] = null;
+        return retAddr;
+    }
+    
     public int popInt() {
         return getCurrentStackFrame().popInt();
     }
@@ -52,6 +58,14 @@ public class Stack {
     
     public void pushPointer(int value) {
         getCurrentStackFrame().pushPointer(value);
+    }
+    
+    public byte[] popValue() {
+        return getCurrentStackFrame().pop();
+    }
+    
+    public void pushValue(byte[] value) {
+        getCurrentStackFrame().push(value);
     }
     
     public void setLocalValue(int index, byte[] value) {
@@ -78,7 +92,7 @@ public class Stack {
         return getCurrentStackFrame().getLocalPointer(index);
     }
 
-    private StackFrame getCurrentStackFrame() {
+    public StackFrame getCurrentStackFrame() {
 	if (currentFrameIndex < 0) {
 	    return null;
 	}

@@ -64,7 +64,7 @@ public class BytecodeReader {
      * pattern for instructions with parameters
      */
     private static final Pattern insPattern = Pattern.compile(".*\\[\\d+\\]\\(\\d+\\)\\s(\\w+)+");  // For example: invokestatic[184](3) 5
-    
+
     public BytecodeReader(VM virtualMachine) {
         this.virtualMachine = virtualMachine;
         try {
@@ -140,7 +140,7 @@ public class BytecodeReader {
         try {
             cParser = new ClassParser(filePath);
             bcelClass = cParser.parse();
-            
+
             classToSave.name = bcelClass.getClassName();
             classToSave.fields = new ArrayList<>();
             classToSave.methods = new ArrayList<>();
@@ -152,11 +152,11 @@ public class BytecodeReader {
             classToSave.superClassName = bcelClass.getSuperclassName();
             //classToSave.constantPool = parseConstantPool(bcelClass);
             classToSave.constantPool = new VMConstantPool();
-            
+
             for (Method method : bcelClass.getMethods()) {
                 VMMethod meth = parseMethod(method, classToSave);
                 classToSave.methods.add(meth);
-                virtualMachine.getMethodsTable().add(meth);
+                virtualMachine.getMethodsTable().getMethods().add(meth);
             }
 
             virtualMachine.getClassesTable().addClass(classToSave);
@@ -182,7 +182,7 @@ public class BytecodeReader {
         meth.instructionPointer = parseInstructions(method, clazz, bcelClass);
         meth.clazz = clazz;
         meth.isStatic = method.isStatic();
-        meth.isNative = method.isNative();     
+        meth.isNative = method.isNative();
         return meth;
     }
 
@@ -216,11 +216,11 @@ public class BytecodeReader {
                 return "java.lang.Array";
             default:
                 signature = signature.replace("[L", "").replace(";", "").replace("/", ".");
-                
+
                 if (signature.startsWith("L")) {
                     signature = signature.substring(1);
                 }
-                
+
                 return signature;
         }
     }
@@ -245,7 +245,7 @@ public class BytecodeReader {
 
         return cPool;
     }
-    
+
     private int parseInstructions(Method method, VMClass clazz, JavaClass jc) {
         int instructionPointer = -1;
         if (method.getCode() != null) {
@@ -256,14 +256,14 @@ public class BytecodeReader {
                 VMInstruction instruction = new VMInstruction();
                 List<String> insParams = new LinkedList<>();
                 Instruction i = ih.getInstruction();
-                if(i instanceof BranchInstruction) {
+                if (i instanceof BranchInstruction) {
                     InstructionHandle targetIh = ((BranchInstruction) i).getTarget();
                     insParams.add(String.valueOf(targetIh.getPosition()));
                     instruction.isBranchInstruction = true;
                 } else {
                     Matcher matcher = insPattern.matcher(i.toString(true));
-                    if(matcher.find()) {
-                        for(int index = 1; index <= matcher.groupCount(); index++) {
+                    if (matcher.find()) {
+                        for (int index = 1; index <= matcher.groupCount(); index++) {
                             insParams.add(matcher.group(index));
                         }
                     }
@@ -283,15 +283,17 @@ public class BytecodeReader {
         if (instructionPointer != -1) {
             translateBranchPointers(instructionPointer, virtualMachine.getInstructionsTable());
         }
-        
+
         return instructionPointer;
-    }    
+    }
 
     private void loadSuperClasses() {
         for (VMClass clazz : virtualMachine.getClassesTable().getClasses()) {
-            int superClassHandle = virtualMachine.getClassesTable().getClassHandle(clazz.superClassName);
-            VMClass superclass = virtualMachine.getClassesTable().getClassByHandle(superClassHandle);
-            clazz.superVMClass = superclass;   
+            if (!clazz.name.equals(clazz.superClassName)) {
+                int superClassHandle = virtualMachine.getClassesTable().getClassHandle(clazz.superClassName);
+                VMClass superclass = virtualMachine.getClassesTable().getClassByHandle(superClassHandle);
+                clazz.superVMClass = superclass;
+            }
         }
     }
 
@@ -302,7 +304,7 @@ public class BytecodeReader {
                 int param = Integer.parseInt(instruction.args[0]);
                 int newPointer = findInstructionPositionByOriginPointer(param, fromInstructionPointer, instructionList);
                 if (newPointer != -1) {
-                     instruction.args[0] = String.valueOf(newPointer);
+                    instruction.args[0] = String.valueOf(newPointer);
                 }
             }
         }

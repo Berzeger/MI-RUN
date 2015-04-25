@@ -12,6 +12,16 @@ import vm.instructions.imul;
 import vm.instructions.istore;
 import vm.instructions.isub;
 import vm.instructions.Instruction;
+import vm.instructions.apush;
+import vm.instructions.dup;
+import vm.instructions.gotoInstruction;
+import vm.instructions.if_acmpne;
+import vm.instructions.invokespecial;
+import vm.instructions.invokestatic;
+import vm.instructions.invokevirtual;
+import vm.instructions.ireturn;
+import vm.instructions.newInstruction;
+import vm.instructions.returnInstruction;
 
 /**
  *
@@ -53,11 +63,26 @@ public class Bytecode {
         instructions.put("astore_2", new astore(2));
         instructions.put("astore_3", new astore(3));
         
+        instructions.put("apush", new apush());
+        
         instructions.put("aload", new aload());
         instructions.put("aload_0", new aload(0));
         instructions.put("aload_1", new aload(1));
         instructions.put("aload_2", new aload(2));
-        instructions.put("aload_3", new aload(3));        
+        instructions.put("aload_3", new aload(3));      
+        
+        instructions.put("invokespecial", new invokespecial());
+        instructions.put("invokestatic", new invokestatic());
+        instructions.put("invokevirtual", new invokevirtual());
+        
+        instructions.put("new", new newInstruction());
+        instructions.put("dup", new dup());
+        
+        instructions.put("ireturn", new ireturn());
+        instructions.put("return", new returnInstruction());
+        
+        instructions.put("goto", new gotoInstruction());
+        instructions.put("if_acmpne", new if_acmpne());
 
     }
 }

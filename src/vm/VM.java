@@ -76,6 +76,11 @@ public class VM {
         printDebugInfo();
         VMClass mainClass = getMainClass();
         int address = getHeap().allocClass(mainClass);
+        int startAddress = getInstructionsTable().addInstruction(new VMInstruction("apush", new String[] { String.valueOf(address) }));
+        
+        getInstructionsTable().addInstruction(new VMInstruction("invokestatic", new String[] { "::main::1" } ));
+        getInstructionsTable().addInstruction(new VMInstruction("apush", new String[] { "0" }));
+        getInstructionsTable().jump(startAddress);
         
         VMInstruction instruction;
         while ((instruction = getInstructionsTable().nextInstruction()) != null) {
@@ -95,8 +100,8 @@ public class VM {
         return classesTable;
     }
     
-    public List<VMMethod> getMethodsTable() {
-        return methodsTable.getMethods();
+    public MethodsTable getMethodsTable() {
+        return methodsTable;
     }
     
     public InstructionsTable getInstructionsTable() {
@@ -105,9 +110,9 @@ public class VM {
 
     private VMClass getMainClass() {
         for (VMClass clazz : getClassesTable().getClasses()) {
-            for (VMMethod method : getMethodsTable()) {
-                if (method.isStatic && method.name.equals("main") && !method.clazz.name.startsWith("java.")) {
-                    return clazz;
+            for (VMMethod method : getMethodsTable().getMethods()) {
+                if (method.isStatic && method.name.equalsIgnoreCase("main") && !method.clazz.name.startsWith("java.")) {
+                    return method.clazz;
                 }
             }
         }

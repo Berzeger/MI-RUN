@@ -94,7 +94,7 @@ public class StackFrame {
         return Utils.fieldTypeToInt(Utils.byteArrayToInt(content, index * FieldType.TYPE_BYTE_SIZE + FieldType.TYPE_BYTE_SIZE));
     }
 
-    private byte[] pop() {
+    public byte[] pop() {
         pointer -= 4; // constant - fix it
         return Utils.getValue(content, pointer);
     }
@@ -113,5 +113,9 @@ public class StackFrame {
 
     int getLocalPointer(int index) {
         return getLocalInt(index);
+    }
+    
+    public int getReturnAddress() {
+        return Utils.fieldTypeToInt(Utils.byteArrayToInt(content, 0));
     }
 }

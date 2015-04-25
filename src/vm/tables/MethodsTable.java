@@ -27,4 +27,14 @@ public class MethodsTable {
     public List<VMMethod> getMethods() {
         return methodsList;
     }
+    
+    public VMMethod getMethodByName(String name) {
+        for (VMMethod method : methodsList) {
+            if (method.name.equals(name)) {
+                return method;
+            }
+        }
+        
+        throw new IllegalArgumentException("Method not found.");
+    }
 }
