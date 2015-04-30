@@ -61,7 +61,7 @@ public final class Heap {
         saveInt(clazz.handle);
         
         // Fields length
-        saveInt(size);
+        saveInt(size); 
         
         // Allocate the physical space. Will be filled with data when processing actual instructions.
         while (content > 0) {
