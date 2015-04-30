@@ -66,7 +66,6 @@ public final class Heap {
     public VMClass getObject(int pointer) {
         // If it turns out we actually need to store 0xFFFFFFFF or some other shit,
         // we'll need to have something like pointer + 4 here.
-        // test
         return virtualMachine.getClassesTable().getClassByHandle(Utils.byteArrayToInt(getSpace(), pointer));
     }
 
