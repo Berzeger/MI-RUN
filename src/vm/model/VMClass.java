@@ -28,19 +28,14 @@ public class VMClass {
     }
 
     public String getSuperVMClassName() {
-
         return this.superVMClass.name;
-
     }
 
     public MethodLookup lookupMethod(String className, String methodName, VM vm, byte[][] args) {
-
         return lookupMethod(className, methodName, vm, args, false);
-
     }
 
     public MethodLookup lookupMethod(String className, String methodName, VM vm, byte[][] args, boolean special) {
-
         String[] currentArgsClassNames = new String[args.length];
         int bestRate = Integer.MAX_VALUE;
         MethodLookup lr = new MethodLookup();
