@@ -48,7 +48,7 @@ public final class Heap {
     public int alloc(VMClass clazz, int size, int content) {
         int address = pointer;
         
-        // Class handle
+        // Class handle 
         saveInt(clazz.handle);
         
         // Fields length
