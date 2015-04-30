@@ -87,7 +87,7 @@ public class Utils {
         }
         return val;
     }
-
+    
     public static String getStringValue(VM virtualMachine, int pointer) {
         return new String(getStringBytes(virtualMachine, pointer));
     }

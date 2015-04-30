@@ -18,6 +18,7 @@ public final class Heap {
     
     // size of shit and stuff
     private final int SIZE = 4;
+    private final int OBJECT_HEADER_SIZE = 8;
 
     public Heap(VM virtualMachine, int size) {
         this.virtualMachine = virtualMachine;
@@ -41,6 +42,14 @@ public final class Heap {
         return alloc(virtualMachine.getClassesTable().getClassByName("java.lang.Array"), size, 0);
     }
     
+    public int allocByteArray(int size, byte[] bytes) {
+        int start = alloc(virtualMachine.getClassesTable().getClassByName("java.lang.Array"), size, size * FieldType.TYPE_BYTE_SIZE);
+        for (int i = 0; i < bytes.length; i++) {
+            getSpace()[start + OBJECT_HEADER_SIZE + i] = bytes[i];
+        }
+        return start;
+    }    
+    
     public int allocObjectArray(int size) {
         return alloc(virtualMachine.getClassesTable().getClassByName("java.lang.ObjectArray"), size, 0);
     }
@@ -63,10 +72,10 @@ public final class Heap {
         return address;
     }
     
-    public VMClass getObject(int pointer) {
+    public VMClass getObject(int address) {
         // If it turns out we actually need to store 0xFFFFFFFF or some other shit,
         // we'll need to have something like pointer + 4 here.
-        return virtualMachine.getClassesTable().getClassByHandle(Utils.byteArrayToInt(getSpace(), pointer));
+        return virtualMachine.getClassesTable().getClassByHandle(Utils.byteArrayToInt(getSpace(), address));
     }
 
     public void saveInt(int value) {
@@ -75,5 +84,16 @@ public final class Heap {
         getSpace()[pointer++] = byteArray[1];
         getSpace()[pointer++] = byteArray[2];
         getSpace()[pointer++] = byteArray[3];
+    }
+    
+    public int saveString(byte[] bytes) {
+        VMClass clazz = virtualMachine.getClassesTable().getClassByName("java.lang.String");
+
+        int address = allocClass(clazz);
+        Utils.setIntField(virtualMachine.getHeap().getSpace(), address, clazz.getFieldIndex("length"), bytes.length);
+
+        int arPointer = virtualMachine.getHeap().allocByteArray(bytes.length, bytes);
+        Utils.setPointerField(virtualMachine.getHeap().getSpace(), address, clazz.getFieldIndex("bytes"), arPointer);
+        return address;        
     }
 }

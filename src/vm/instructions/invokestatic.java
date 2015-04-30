@@ -29,7 +29,7 @@ public class invokestatic extends Instruction {
 
         VMMethod method = vm.getMethodsTable().getMethodByName(methodName);
         VMClass clazz = method.clazz;
-        MethodLookup lookup = clazz.lookupMethod(clazz.name, methodName, vm, argsArray);
+        MethodLookup lookup = clazz.lookupMethod(superClassName, methodName, vm, argsArray);
 
         if (lookup.method.isNative) {
             if (lookup.method.name.equals("println")) {
