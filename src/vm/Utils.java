@@ -5,6 +5,9 @@
  */
 package vm;
 
+import vm.model.FieldType;
+import vm.model.Heap;
+
 /**
  *
  * @author Václav
@@ -40,7 +43,7 @@ public class Utils {
     }
 
     public static byte[] getValue(byte[] where, int from) {
-        byte[] value = new byte[4]; // constant - fix
+        byte[] value = new byte[FieldType.TYPE_BYTE_SIZE];
         for (int i = 0; i < value.length; i++) {
             value[i] = where[i + from];
         }
@@ -48,16 +51,16 @@ public class Utils {
     }
 
     public static byte[] getField(byte[] where, int objectAddress, int fieldIndex) {
-        byte[] value = new byte[4]; // type size, need to replace it for a constant when I stop being a lazy fuck.
-        int start = fieldIndex * 4 + objectAddress + 8;
+        byte[] value = new byte[FieldType.TYPE_BYTE_SIZE];
+        int start = fieldIndex * FieldType.TYPE_BYTE_SIZE + objectAddress + Heap.OBJECT_HEADER_SIZE;
 
-        System.arraycopy(where, start, value, 0, 4); // replace the bloody constant already, will ya?
+        System.arraycopy(where, start, value, 0, FieldType.TYPE_BYTE_SIZE);
         return value;
     }
 
     public static void setField(byte[] where, int objectAddress, int fieldIndex, byte[] value) {
         // field offset + object offset + object header
-        int start = fieldIndex * 4 + objectAddress + 8;
+        int start = fieldIndex * FieldType.TYPE_BYTE_SIZE + objectAddress + Heap.OBJECT_HEADER_SIZE;
 
         // copy field value to heap
         System.arraycopy(value, 0, where, objectAddress, value.length);
@@ -93,11 +96,15 @@ public class Utils {
     }
 
     public static byte[] getStringBytes(VM virtualMachine, int pointer) {
-        int bc = Utils.fieldTypeToInt(Utils.byteArrayToInt(Utils.getField(virtualMachine.getHeap().getSpace(), pointer, 0), 0));
+        byte[] field = Utils.getField(virtualMachine.getHeap().getSpace(), pointer, 0);
+        // how many bytes there are in the strings
+        int byteCount = Utils.fieldTypeToInt(Utils.byteArrayToInt(field, 0));
+        
+        // where to start reading the string
         int start = Utils.fieldTypeToInt(Utils.byteArrayToInt(Utils.getField(virtualMachine.getHeap().getSpace(), pointer, 1), 0));
 
-        start += 8; // TODO: Constant - Heap.OBJECT_HEADER_BYTES
+        start += Heap.OBJECT_HEADER_SIZE;
 
-        return Utils.subArray(virtualMachine.getHeap().getSpace(), start, bc);
+        return Utils.subArray(virtualMachine.getHeap().getSpace(), start, byteCount);
     }
 }

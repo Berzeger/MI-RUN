@@ -30,7 +30,7 @@ public class VM {
 
     public VM() {
         stack = new Stack(64, 1024);
-        heap = new Heap(this, 1024);
+        heap = new Heap(this, 4096);
         classesTable = new ClassesTable();
         methodsTable = new MethodsTable();
         instructionsTable = new InstructionsTable();
