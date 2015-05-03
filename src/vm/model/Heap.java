@@ -46,9 +46,7 @@ public final class Heap {
 
     public int allocByteArray(int size, byte[] bytes) {
         int start = alloc(virtualMachine.getClassesTable().getClassByName("java.lang.Array"), size, size * FieldType.TYPE_BYTE_SIZE);
-        for (int i = 0; i < bytes.length; i++) {
-            getSpace()[start + OBJECT_HEADER_SIZE + i] = bytes[i];
-        }
+        System.arraycopy(bytes, 0, getSpace(), start + OBJECT_HEADER_SIZE, bytes.length);
         return start;
     }
 
@@ -67,7 +65,7 @@ public final class Heap {
 
         // Allocate the physical space. Will be filled with actual data when processing instructions.
         while (content > 0) {
-            saveInt(0);
+            getSpace()[pointer++] = 0;
             content--;
         }
 
