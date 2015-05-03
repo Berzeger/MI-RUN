@@ -50,9 +50,9 @@ public class Utils {
         return value;
     }
 
-    public static byte[] getField(byte[] where, int objectAddress, int fieldIndex) {
+    public static byte[] getField(byte[] where, int objectStart, int fieldIndex) {
         byte[] value = new byte[FieldType.TYPE_BYTE_SIZE];
-        int start = fieldIndex * FieldType.TYPE_BYTE_SIZE + objectAddress + Heap.OBJECT_HEADER_SIZE;
+        int start = fieldIndex * FieldType.TYPE_BYTE_SIZE + objectStart + Heap.OBJECT_HEADER_SIZE;
 
         System.arraycopy(where, start, value, 0, FieldType.TYPE_BYTE_SIZE);
         return value;
@@ -63,7 +63,7 @@ public class Utils {
         int start = fieldIndex * FieldType.TYPE_BYTE_SIZE + objectAddress + Heap.OBJECT_HEADER_SIZE;
 
         // copy field value to heap
-        System.arraycopy(value, 0, where, objectAddress, value.length);
+        System.arraycopy(value, 0, where, start, value.length);
     }
 
     // do we need this?

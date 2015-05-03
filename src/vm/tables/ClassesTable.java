@@ -28,7 +28,7 @@ public class ClassesTable {
     
     public void addClass(VMClass clazz) {
         clazz.handle = count;
-        classList.add(clazz);
+        classList.add(clazz.handle, clazz);
         handlesMap.put(clazz.name, count++);
     }
     

@@ -16,9 +16,6 @@ public final class Heap {
     private int pointer;
     private int activeSpace;
 
-    // size of shit and stuff
-    private final int SIZE = 4;
-
     // 4 bytes for size, 4 bytes for handle
     public static final int OBJECT_HEADER_SIZE = 8;
 
@@ -37,11 +34,11 @@ public final class Heap {
     }
 
     public int allocClass(VMClass clazz) {
-        return alloc(clazz, 0, clazz.fields.size() * SIZE);
+        return alloc(clazz, 0, clazz.fields.size() * FieldType.TYPE_BYTE_SIZE);
     }
 
     public int allocByteArray(int size) {
-        return alloc(virtualMachine.getClassesTable().getClassByName("java.lang.Array"), size, 0);
+        return alloc(virtualMachine.getClassesTable().getClassByName("java.lang.Array"), size, size);
     }
 
     public int allocByteArray(int size, byte[] bytes) {
@@ -51,7 +48,7 @@ public final class Heap {
     }
 
     public int allocObjectArray(int size) {
-        return alloc(virtualMachine.getClassesTable().getClassByName("java.lang.ObjectArray"), size, 0);
+        return alloc(virtualMachine.getClassesTable().getClassByName("java.lang.ObjectArray"), size, size * FieldType.TYPE_BYTE_SIZE);
     }
 
     public int alloc(VMClass clazz, int size, int content) {
@@ -78,10 +75,11 @@ public final class Heap {
         return address;
     }
 
-    public VMClass getObject(int handle) {
+    public VMClass getObject(int address) {
         // If it turns out we actually need to store 0xFFFFFFFF or some other shit,
         // we'll need to have something like pointer + 4 here.
-        return virtualMachine.getClassesTable().getClassByHandle(Utils.byteArrayToInt(getSpace(), handle));
+        int handle = Utils.byteArrayToInt(getSpace(), address);
+        return virtualMachine.getClassesTable().getClassByHandle(handle);
     }
 
     public void saveInt(int value) {
@@ -96,11 +94,11 @@ public final class Heap {
         VMClass clazz = virtualMachine.getClassesTable().getClassByName("java.lang.String");
 
         int address = allocClass(clazz);
-    
         Utils.setIntField(getSpace(), address, clazz.getFieldIndex("length"), bytes.length);
 
         int arPointer = allocByteArray(bytes.length, bytes);
         Utils.setPointerField(getSpace(), address, clazz.getFieldIndex("bytes"), arPointer);
+        
         return address;
     }
 }
