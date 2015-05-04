@@ -32,16 +32,29 @@ public class invokestatic extends Instruction {
         MethodLookup lookup = clazz.lookupMethod(superClassName, methodName, vm, argsArray);
 
         if (lookup.method.isNative) {
-            if (lookup.method.name.equals("println")) {
-                if (lookup.method.arguments.get(0).className.equals("Integer")) {
-                    vm.getStack().pushValue(lookup.args[0]);
-                    System.out.println(vm.getStack().popInt());
-                } else { // String
-                    int pointer = Utils.fieldTypeToInt(Utils.byteArrayToInt(argsArray[0], 0));
+            switch (lookup.method.name) {
+                case "println":
+                    if (lookup.method.arguments.get(0).className.equals("Integer")) {
+                        vm.getStack().pushValue(lookup.args[0]);
+                        System.out.println(vm.getStack().popInt());
+                    } else { // String
+                        int pointer = Utils.fieldTypeToInt(Utils.byteArrayToInt(argsArray[0], 0));
 
-                    String value = Utils.getStringValue(vm, pointer);
-                    System.out.println(value);
-                }
+                        String value = Utils.getStringValue(vm, pointer);
+                        System.out.println(value);
+                    }
+                    break;
+                case "print":
+                    if (lookup.method.arguments.get(0).className.equals("Integer")) {
+                        vm.getStack().pushValue(lookup.args[0]);
+                        int val = vm.getStack().popInt();
+                        System.out.print(val);
+                    } else { // String
+                        int pointer = Utils.fieldTypeToInt(Utils.byteArrayToInt(argsArray[0], 0));
+                        String value = Utils.getStringValue(vm, pointer);
+                        System.out.print(value);
+                    }
+                    break;
             }
         } else {
             vm.getStack().beginStackFrame(vm.getInstructionsTable().getProgramCounter(), lookup);
