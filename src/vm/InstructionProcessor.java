@@ -21,6 +21,10 @@ public class InstructionProcessor {
 
         Instruction inst = Bytecode.instructions.get(instruction.getName());
 
+        if (inst == null) {
+            System.err.println("Unknown instruction: " + instruction.toString());
+        }
+        
         // TODO: Check for null pointer somewhere else
         if (inst != null) {
             inst.execute(virtualMachine, instruction.getArgs());

@@ -213,6 +213,7 @@ public class BytecodeReader {
             case "I":
                 return "Integer";
             case "[B":
+            case "[I":
                 return "java.lang.Array";
             default:
                 signature = signature.replace("[L", "").replace(";", "").replace("/", ".");

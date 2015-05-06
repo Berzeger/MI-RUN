@@ -90,7 +90,7 @@ public class Utils {
         }
         return val;
     }
-    
+
     public static String getStringValue(VM virtualMachine, int pointer) {
         return new String(getStringBytes(virtualMachine, pointer));
     }
@@ -99,12 +99,37 @@ public class Utils {
         byte[] field = Utils.getField(virtualMachine.getHeap().getSpace(), pointer, 0);
         // how many bytes there are in the strings
         int byteCount = Utils.fieldTypeToInt(Utils.byteArrayToInt(field, 0));
-        
+
         // where to start reading the string
         int start = Utils.fieldTypeToInt(Utils.byteArrayToInt(Utils.getField(virtualMachine.getHeap().getSpace(), pointer, 1), 0));
 
         start += Heap.OBJECT_HEADER_SIZE;
 
         return Utils.subArray(virtualMachine.getHeap().getSpace(), start, byteCount);
+    }
+
+    public static void storeByteArrayValue(VM virtualMachine, int pointer, int index, byte value) {
+        int start = pointer + Heap.OBJECT_HEADER_SIZE + index;
+        virtualMachine.getHeap().getSpace()[start] = value;
+    }
+
+    public static byte getByteArrayValue(VM virtualMachine, int pointer, int index) {
+        int start = pointer + Heap.OBJECT_HEADER_SIZE + index;
+        return virtualMachine.getHeap().getSpace()[start];
+
+    }
+
+    public static int getArrayLength(Heap heap, int pointer) {
+        pointer += FieldType.TYPE_BYTE_SIZE;
+        byte[] size = Utils.subArray(heap.getSpace(), pointer, 4);
+
+        return Utils.byteArrayToInt(size, 0);
+    }
+
+    public static int getArrayLength(VM virtualMachine, int pointer) {
+        pointer += FieldType.TYPE_BYTE_SIZE;
+        byte[] size = Utils.subArray(virtualMachine.getHeap().getSpace(), pointer, 4);
+
+        return Utils.byteArrayToInt(size, 0);
     }
 }

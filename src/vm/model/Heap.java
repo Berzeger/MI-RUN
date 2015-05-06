@@ -29,6 +29,10 @@ public final class Heap {
         activeSpace = 0;
     }
 
+    private boolean isHeapFull(int bytes) {
+        return (getSpace().length + bytes) > (size / 2);
+    }
+    
     public byte[] getSpace() {
         return activeSpace == 0 ? space1 : space2;
     }
@@ -53,6 +57,10 @@ public final class Heap {
 
     public int alloc(VMClass clazz, int size, int content) {
         int address = pointer;
+        
+        if (isHeapFull(content)) {
+            //collect();
+        }
 
         // Class handle 
         saveInt(clazz.handle);
@@ -100,5 +108,17 @@ public final class Heap {
         Utils.setPointerField(getSpace(), address, clazz.getFieldIndex("bytes"), arPointer);
         
         return address;
+    }
+
+    private void collect() {
+        if (virtualMachine.debug) {
+            System.out.println("Starting garbage collector.");
+        }
+        
+        //List<VMClass> all
+        
+        if (virtualMachine.debug) {
+            System.out.println("Garbage collecting finished. Enjoy your new trash-free heap!");
+        }
     }
 }
