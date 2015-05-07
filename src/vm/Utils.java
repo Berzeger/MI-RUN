@@ -108,6 +108,16 @@ public class Utils {
         return Utils.subArray(virtualMachine.getHeap().getSpace(), start, byteCount);
     }
 
+    public static void storeIntArrayValue(VM virtualMachine, int pointer, int index, int value) {
+        int start = pointer + Heap.OBJECT_HEADER_SIZE + index;
+        // TODO
+    }
+    
+    public static int getIntArrayValue(VM virtualMachine, int pointer, int index) {
+        int start = pointer + Heap.OBJECT_HEADER_SIZE + index;
+        return Utils.byteArrayToInt(virtualMachine.getHeap().getSpace(), start);
+    }
+    
     public static void storeByteArrayValue(VM virtualMachine, int pointer, int index, byte value) {
         int start = pointer + Heap.OBJECT_HEADER_SIZE + index;
         virtualMachine.getHeap().getSpace()[start] = value;
@@ -116,7 +126,6 @@ public class Utils {
     public static byte getByteArrayValue(VM virtualMachine, int pointer, int index) {
         int start = pointer + Heap.OBJECT_HEADER_SIZE + index;
         return virtualMachine.getHeap().getSpace()[start];
-
     }
 
     public static int getArrayLength(Heap heap, int pointer) {

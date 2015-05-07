@@ -5,7 +5,6 @@
  */
 package vm.instructions;
 
-import javax.rmi.CORBA.Util;
 import vm.Utils;
 import vm.VM;
 

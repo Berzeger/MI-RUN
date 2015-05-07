@@ -28,7 +28,7 @@ public class invokevirtual extends Instruction {
         int objectPointer = vm.getStack().popPointer();
         
         VMClass clazz = vm.getHeap().getObject(objectPointer);
-        MethodLookup lookup = clazz.lookupMethod(className, methodName, vm, argsArray, true);
+        MethodLookup lookup = clazz.lookupMethod(className, methodName, vm, argsArray);
         
         vm.getStack().beginStackFrame(vm.getInstructionsTable().getProgramCounter(), lookup, objectPointer);
         vm.getInstructionsTable().jump(lookup.method.instructionPointer);        

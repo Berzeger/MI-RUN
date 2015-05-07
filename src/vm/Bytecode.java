@@ -19,6 +19,7 @@ import vm.instructions.bastore;
 import vm.instructions.dup;
 import vm.instructions.getfield;
 import vm.instructions.gotoInstruction;
+import vm.instructions.iaload;
 import vm.instructions.if_acmpeq;
 import vm.instructions.if_acmpne;
 import vm.instructions.if_icmpeq;
@@ -92,7 +93,7 @@ public class Bytecode {
         instructions.put("aload_2", new aload(2));
         instructions.put("aload_3", new aload(3));
         instructions.put("baload", new baload());
-        instructions.put("iaload", new baload());
+        instructions.put("iaload", new baload()); // iaload is flocked up
         
         instructions.put("ldc", new ldc());
 

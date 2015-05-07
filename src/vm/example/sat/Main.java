@@ -12,13 +12,9 @@ package vm.example.sat;
 public class Main {
     public static void main(String[] args) {
         State state = new State(10);
-        int[] weights = new int[] {0, 1, 1, 1, 0, 0, 1, 1, 1, 0};
+        byte[] weights = new byte[] {0, 1, 1, 1, 0, 0, 1, 1, 1, 0};
         
-        for (int i = 0; i < weights.length; i++) {
-            vm.system.System.println(weights[i]);
-        }
-        
-        //int sum = state.CalculateWeight(weights);
-        //vm.system.System.println(sum);
+        int sum = state.CalculateWeight(weights);
+        vm.system.System.println(sum);
     }
 }

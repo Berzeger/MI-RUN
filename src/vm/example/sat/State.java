@@ -11,12 +11,12 @@ package vm.example.sat;
  */
 public class State {
 
-    public int[] ranks;
+    public byte[] ranks;
     public int weight;
 
     public State(int varCount) {
         vm.system.System.println(varCount);
-        ranks = new int[varCount];
+        ranks = new byte[varCount];
         vm.system.System.println(ranks.length);
     }
 
@@ -29,19 +29,11 @@ public class State {
 
     }
 
-    public int CalculateWeight(int[] weights) {
+    public int CalculateWeight(byte[] weights) {
         int sum = 0;
-        /*
-         for (int i = 0; i < 10; i++) {
-         vm.system.System.println(i);
-         }*/
-
-        vm.system.System.println(ranks.length);
-        for (int i = 0; i < ranks.length; i++) {
-            vm.system.System.println("huh?");
-            vm.system.System.println(ranks[i]);
-            if (ranks[i] == 1) {
-                vm.system.System.println("přidávám piču.");
+        
+        for (int i = 0; i < weights.length; i++) {
+            if (weights[i] == 1) {
                 vm.system.System.println("sum = ");
                 sum += weights[i];
                 vm.system.System.println(sum);

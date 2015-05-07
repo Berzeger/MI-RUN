@@ -19,6 +19,7 @@ public class bastore extends Instruction {
         int value = vm.getStack().popInt();
         int index = vm.getStack().popInt();
         int objPointer = vm.getStack().popPointer();
+        System.out.println("Trying to save " + value);
         
         Utils.storeByteArrayValue(vm, objPointer, index, (byte) value);
     }
