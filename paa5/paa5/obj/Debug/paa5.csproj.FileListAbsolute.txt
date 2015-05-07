@@ -1,0 +1,9 @@
+c:\users\asus\dropbox\skola\mi-paa\homeworks\5\paa5\paa5\bin\Debug\paa5.exe.config
+c:\users\asus\dropbox\skola\mi-paa\homeworks\5\paa5\paa5\bin\Debug\paa5.exe
+c:\users\asus\dropbox\skola\mi-paa\homeworks\5\paa5\paa5\bin\Debug\paa5.pdb
+c:\users\asus\dropbox\skola\mi-paa\homeworks\5\paa5\paa5\obj\Debug\paa5.csprojResolveAssemblyReference.cache
+c:\users\asus\dropbox\skola\mi-paa\homeworks\5\paa5\paa5\obj\Debug\paa5.exe
+c:\users\asus\dropbox\skola\mi-paa\homeworks\5\paa5\paa5\obj\Debug\paa5.pdb
+C:\Users\Filip\OneDrive\Skola\MI-PAA\homeworks\5\paa5\paa5\bin\Debug\paa5.exe.config
+C:\Users\Filip\OneDrive\Skola\MI-PAA\homeworks\5\paa5\paa5\obj\Debug\paa5.exe
+C:\Users\Filip\OneDrive\Skola\MI-PAA\homeworks\5\paa5\paa5\obj\Debug\paa5.pdb
