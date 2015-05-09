@@ -12,6 +12,9 @@ import vm.instructions.imul;
 import vm.instructions.istore;
 import vm.instructions.isub;
 import vm.instructions.Instruction;
+import vm.instructions.aaload;
+import vm.instructions.aastore;
+import vm.instructions.anewarray;
 import vm.instructions.apush;
 import vm.instructions.arraylength;
 import vm.instructions.baload;
@@ -94,6 +97,9 @@ public class Bytecode {
         instructions.put("baload", new baload());
         instructions.put("iaload", new baload()); // iaload is flocked up
         
+        instructions.put("aaload", new aaload());
+        instructions.put("aastore", new aastore());
+        
         instructions.put("ldc", new ldc());
 
         instructions.put("invokespecial", new invokespecial());
@@ -102,6 +108,7 @@ public class Bytecode {
 
         instructions.put("new", new newInstruction());
         instructions.put("newarray", new newarray());
+        instructions.put("anewarray", new anewarray());
         instructions.put("dup", new dup());
 
         instructions.put("ireturn", new ireturn());

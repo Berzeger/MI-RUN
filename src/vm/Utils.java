@@ -127,6 +127,19 @@ public class Utils {
         int start = pointer + Heap.OBJECT_HEADER_SIZE + index;
         return virtualMachine.getHeap().getSpace()[start];
     }
+    
+    public static void storeObjectArrayValue(VM virtualMachine, int pointer, int index, int value) {
+        int start = pointer + Heap.OBJECT_HEADER_SIZE + index * FieldType.TYPE_BYTE_SIZE;
+        byte[] bytes = intToByteArray(createPointer(value));
+        System.arraycopy(bytes, 0, virtualMachine.getHeap().getSpace(), start, 4);
+
+    }
+
+    public static int getObjectArrayValue(VM virtualMachine, int pointer, int index) {
+        int start = pointer + Heap.OBJECT_HEADER_SIZE + index * FieldType.TYPE_BYTE_SIZE;
+        byte[] bytes = Utils.subArray(virtualMachine.getHeap().getSpace(), start, 4);
+        return Utils.fieldTypeToInt(byteArrayToInt(bytes, 0));
+    }    
 
     public static int getArrayLength(Heap heap, int pointer) {
         pointer += FieldType.TYPE_BYTE_SIZE;
