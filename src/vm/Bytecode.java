@@ -17,6 +17,7 @@ import vm.instructions.aastore;
 import vm.instructions.aconst_null;
 import vm.instructions.anewarray;
 import vm.instructions.apush;
+import vm.instructions.areturn;
 import vm.instructions.arraylength;
 import vm.instructions.baload;
 import vm.instructions.bastore;
@@ -46,6 +47,7 @@ import vm.instructions.ireturn;
 import vm.instructions.ldc;
 import vm.instructions.newInstruction;
 import vm.instructions.newarray;
+import vm.instructions.pop;
 import vm.instructions.putfield;
 import vm.instructions.returnInstruction;
 
@@ -120,7 +122,10 @@ public class Bytecode {
         instructions.put("dup", new dup());
 
         instructions.put("ireturn", new ireturn());
+        instructions.put("areturn", new areturn());
         instructions.put("return", new returnInstruction());
+        
+        instructions.put("pop", new pop());
 
         instructions.put("putfield", new putfield());
         instructions.put("getfield", new getfield());
