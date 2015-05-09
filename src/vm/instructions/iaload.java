@@ -20,7 +20,7 @@ public class iaload extends Instruction {
         int objPointer = vm.getStack().popPointer();
 
         int value = Utils.getIntArrayValue(vm, objPointer, index);
-        System.out.println("Loaded " + value);
+        //System.out.println("Loaded " + value);
 
         vm.getStack().pushInt(value);
     }

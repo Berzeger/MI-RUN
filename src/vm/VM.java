@@ -1,12 +1,8 @@
 package vm;
 
-import java.util.ArrayList;
-import java.util.List;
-import static vm.Bytecode.*;
 import vm.model.Heap;
 import vm.model.Stack;
 import vm.model.VMClass;
-import vm.model.VMField;
 import vm.model.VMInstruction;
 import vm.model.VMMethod;
 import vm.tables.ClassesTable;
@@ -30,7 +26,7 @@ public class VM {
 
     public VM() {
         stack = new Stack(64, 1024);
-        heap = new Heap(this, 4096);
+        heap = new Heap(this, 200000000);
         classesTable = new ClassesTable();
         methodsTable = new MethodsTable();
         instructionsTable = new InstructionsTable();

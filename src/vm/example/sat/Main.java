@@ -11,22 +11,21 @@ package vm.example.sat;
  */
 public class Main {
 
-    public static void main(String[] args) {
-	State state = new State(10);
-	int[] weights = new int[]{87 ,46, 76, 16, 35, 17, 26, 10, 67, 54, 62, 62, 12, 17, 30, 19, 25, 64, 95, 28};
+    public static void main(String[] args) {                                  
+	int[] weights = new int[]{1, 1, 7, 3, 4, 2, 0, 8, 9, 2, 6, 8, 6, 2, 9, 9, 0, 6, 7, 3};
 
 	Clause[] clauses = new Clause[10];
 
-	clauses[0] = new Clause(15, 30, 1, 16, 19, 0, 2, 46, 1);
-	clauses[1] = new Clause(15, 30, 1, 3, 76, 1, 6, 17, 0);
-	clauses[2] = new Clause(12, 62, 0, 6, 17, 0, 13, 12, 1);
-	clauses[3] = new Clause(2, 46, 1, 16, 19, 0, 1, 87, 1);
-	clauses[4] = new Clause(17, 25, 0, 19, 95, 0, 1, 87, 1);
-	clauses[5] = new Clause(16, 19, 1, 6, 17, 1, 14, 17, 0);
-	clauses[6] = new Clause(8, 10, 0, 15, 30, 0, 16, 19, 0);
-	clauses[7] = new Clause(3, 76, 1, 8, 10, 1, 20, 28, 0);
-	clauses[8] = new Clause(9, 67, 1, 13, 12, 1, 8,10,1);
-	clauses[9] = new Clause(8, 10, 0, 13, 12, 0, 16, 19, 1);
+	clauses[0] = new Clause(4, 3, 0, 18, 6, 1, 19, 7, 0);
+	clauses[1] = new Clause(3, 7, 0, 18, 6, 0, 5, 4, 1);
+	clauses[2] = new Clause(5, 4, 1, 8, 8, 1, 15, 9, 1);
+	clauses[3] = new Clause(20, 3, 1, 7, 0, 0, 16, 9, 1);
+	clauses[4] = new Clause(10, 2, 0, 13, 6, 1, 7, 0, 1);
+	clauses[5] = new Clause(12, 8, 1, 9, 9, 1, 17, 0, 0);
+	clauses[6] = new Clause(17, 0, 0, 19, 7, 0, 5, 4, 0);
+	clauses[7] = new Clause(16, 9, 1, 9, 9, 1, 15, 9, 0);
+	clauses[8] = new Clause(11, 6, 0, 5, 4, 1, 14, 2, 1);
+	clauses[9] = new Clause(18, 6, 0, 10, 2, 1, 13, 6, 0);
 	
 	Formula formula = new Formula(clauses);
 	
