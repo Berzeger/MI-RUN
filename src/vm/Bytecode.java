@@ -14,6 +14,7 @@ import vm.instructions.isub;
 import vm.instructions.Instruction;
 import vm.instructions.aaload;
 import vm.instructions.aastore;
+import vm.instructions.aconst_null;
 import vm.instructions.anewarray;
 import vm.instructions.apush;
 import vm.instructions.arraylength;
@@ -30,6 +31,12 @@ import vm.instructions.if_icmpgt;
 import vm.instructions.if_icmple;
 import vm.instructions.if_icmplt;
 import vm.instructions.if_icmpne;
+import vm.instructions.ifeq;
+import vm.instructions.ifge;
+import vm.instructions.ifgt;
+import vm.instructions.ifle;
+import vm.instructions.iflt;
+import vm.instructions.ifne;
 import vm.instructions.iinc;
 import vm.instructions.intpush;
 import vm.instructions.invokespecial;
@@ -56,7 +63,7 @@ public class Bytecode {
         instructions.put("imul", new imul());
         instructions.put("idiv", new idiv());
         instructions.put("iinc", new iinc());
-        
+
         instructions.put("iconst_0", new iconst(0));
         instructions.put("iconst_1", new iconst(1));
         instructions.put("iconst_2", new iconst(2));
@@ -64,6 +71,7 @@ public class Bytecode {
         instructions.put("iconst_4", new iconst(4));
         instructions.put("iconst_5", new iconst(5));
         instructions.put("iconst_m1", new iconst(-1));
+        instructions.put("aconst_null", new aconst_null());
 
         instructions.put("iload", new iload());
         instructions.put("iload_0", new iload(0));
@@ -88,7 +96,7 @@ public class Bytecode {
         instructions.put("sipush", new intpush());
         instructions.put("bastore", new bastore());
         instructions.put("iastore", new bastore());
-        
+
         instructions.put("aload", new aload());
         instructions.put("aload_0", new aload(0));
         instructions.put("aload_1", new aload(1));
@@ -96,10 +104,10 @@ public class Bytecode {
         instructions.put("aload_3", new aload(3));
         instructions.put("baload", new baload());
         instructions.put("iaload", new baload()); // iaload is flocked up
-        
+
         instructions.put("aaload", new aaload());
         instructions.put("aastore", new aastore());
-        
+
         instructions.put("ldc", new ldc());
 
         instructions.put("invokespecial", new invokespecial());
@@ -113,7 +121,7 @@ public class Bytecode {
 
         instructions.put("ireturn", new ireturn());
         instructions.put("return", new returnInstruction());
-        
+
         instructions.put("putfield", new putfield());
         instructions.put("getfield", new getfield());
         instructions.put("arraylength", new arraylength());
@@ -127,6 +135,12 @@ public class Bytecode {
         instructions.put("if_icmpgt", new if_icmpgt());
         instructions.put("if_icmple", new if_icmple());
         instructions.put("if_icmplt", new if_icmplt());
+        instructions.put("ifeq", new ifeq());
+        instructions.put("ifge", new ifge());
+        instructions.put("ifgt", new ifgt());
+        instructions.put("ifle", new ifle());
+        instructions.put("iflt", new iflt());
+        instructions.put("ifne", new ifne());
 
     }
 }
