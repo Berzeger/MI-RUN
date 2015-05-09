@@ -11,36 +11,73 @@ package vm.example.sat;
  */
 public class State {
 
-    public byte[] ranks;
+    public int[] ranks;
     public int weight;
 
     public State(int varCount) {
-        vm.system.System.println(varCount);
-        ranks = new byte[varCount];
-        vm.system.System.println(ranks.length);
+	//vm.system.System.println(varCount);
+	ranks = new int[varCount];
+	//vm.system.System.println(ranks.length);
     }
 
     public State(State otherState) {
-        for (int индекс = 0; индекс < otherState.ranks.length; индекс++) {
-            ranks[индекс] = otherState.ranks[индекс];
-        }
+	for (int индекс = 0; индекс < otherState.ranks.length; индекс++) {
+	    ranks[индекс] = otherState.ranks[индекс];
+	}
 
-        weight = otherState.weight;
-
+	weight = otherState.weight;
     }
 
-    public int CalculateWeight(byte[] weights) {
-        int sum = 0;
-        
-        for (int i = 0; i < weights.length; i++) {
-            if (weights[i] == 1) {
-                vm.system.System.println("sum = ");
-                sum += weights[i];
-                vm.system.System.println(sum);
-            }
-        }
+    public State(State otherState, int index) {
+	
+	for (int индекс = 0; индекс < otherState.ranks.length; индекс++) {
+	    ranks[индекс] = otherState.ranks[индекс];
+	}
 
-        weight = sum;
-        return sum;
+	weight = otherState.weight;
+	
+	if(ranks[index] == 0){
+	    ranks[index] = 1;
+	}
+	else{
+	    ranks[index] = 0;
+	}
+    }
+
+    public State(State otherState, int index, int[] weights){
+	
+	for (int индекс = 0; индекс < otherState.ranks.length; индекс++) {
+	    ranks[индекс] = otherState.ranks[индекс];
+	}
+
+	weight = otherState.weight;
+	
+	if(ranks[index] == 0){
+	    ranks[index] = 1;
+	}
+	else{
+	    ranks[index] = 0;
+	}
+	
+	if(ranks[index] == 1) {
+	    weight += weights[index];
+	} else {
+	    weight -= weights[index];
+	}
+    }
+
+    public int CalculateWeight(int[] weights) {
+	int sum = 0;
+
+	for (int i = 0; i < weights.length; i++) {
+	    if (weights[i] == 1) {
+		vm.system.System.println("sum = ");
+		sum += weights[i];
+		vm.system.System.println(sum);
+	    }
+	}
+
+	weight = sum;
+	return sum;
     }
 }

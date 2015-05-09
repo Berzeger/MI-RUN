@@ -19,7 +19,6 @@ import vm.instructions.bastore;
 import vm.instructions.dup;
 import vm.instructions.getfield;
 import vm.instructions.gotoInstruction;
-import vm.instructions.iaload;
 import vm.instructions.if_acmpeq;
 import vm.instructions.if_acmpne;
 import vm.instructions.if_icmpeq;
