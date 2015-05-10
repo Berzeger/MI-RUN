@@ -25,7 +25,6 @@ public class InstructionProcessor {
             System.err.println("Unknown instruction: " + instruction.toString());
         }
         
-        // TODO: Check for null pointer somewhere else
         if (inst != null) {
             inst.execute(virtualMachine, instruction.getArgs());
         }

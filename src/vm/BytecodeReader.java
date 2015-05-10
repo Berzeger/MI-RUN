@@ -87,20 +87,6 @@ public class BytecodeReader {
             });
 
             loadSuperClasses();
-
-            // I'll keep this here just for future references
-            // as how to read method bytecode
-            /*
-             for (Method method : bcelClass.getMethods()) {
-             System.out.println(method);
-             //System.out.println(-79 & 0xFF);
-             // TODO: Figure out why there are negative integers in the code
-             System.out.println(Arrays.toString(method.getCode().getCode()));
-   
-             // Prints out one byte
-             System.out.println(method.getCode().getCode()[0]);
-             }
-             */
         } catch (IOException ex) {
             System.err.println("Could not locate or read class file.");
         }

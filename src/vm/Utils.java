@@ -68,7 +68,6 @@ public class Utils {
     }
 
     public static void setIntField(byte[] where, int objectAddress, int fieldIndex, int value) {
-        // na createInt a createPointer se musíme zeptat Jirky ještě
         byte[] byteValue = intToByteArray(createInt(value));
         setField(where, objectAddress, fieldIndex, byteValue);
     }
@@ -92,7 +91,7 @@ public class Utils {
 
     public static byte[] getStringBytes(VM virtualMachine, int pointer) {
         byte[] field = Utils.getField(virtualMachine.getHeap().getSpace(), pointer, 0);
-        // how many bytes there are in the strings
+        // how many bytes there are in the string
         int byteCount = Utils.fieldTypeToInt(Utils.byteArrayToInt(field, 0));
 
         // where to start reading the string
@@ -137,14 +136,14 @@ public class Utils {
     }    
 
     public static int getArrayLength(Heap heap, int pointer) {
-        pointer += FieldType.TYPE_BYTE_SIZE;
+        pointer += FieldType.TYPE_BYTE_SIZE * 2;
         byte[] size = Utils.subArray(heap.getSpace(), pointer, 4);
 
         return Utils.byteArrayToInt(size, 0);
     }
 
     public static int getArrayLength(VM virtualMachine, int pointer) {
-        pointer += FieldType.TYPE_BYTE_SIZE;
+        pointer += FieldType.TYPE_BYTE_SIZE * 2;
         byte[] size = Utils.subArray(virtualMachine.getHeap().getSpace(), pointer, 4);
 
         return Utils.byteArrayToInt(size, 0);

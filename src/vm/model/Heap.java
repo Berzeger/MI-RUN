@@ -18,8 +18,10 @@ public final class Heap {
     private int pointer;
     private int activeSpace;
 
-    // 4 bytes for size, 4 bytes for handle
-    public static final int OBJECT_HEADER_SIZE = 8;
+    // 4 bytes for class marker, 4 bytes for size, 4 bytes for handle
+    public static final int OBJECT_HEADER_SIZE = 12;
+
+    public static final int CLASS_MARK = 0xC1A55;
 
     public Heap(VM virtualMachine, int size) {
         this.virtualMachine = virtualMachine;
@@ -32,11 +34,15 @@ public final class Heap {
     }
 
     private boolean isHeapFull(int bytes) {
-        return (getSpace().length + bytes) > (size / 2);
+        return (getSpace().length - pointer) <= (OBJECT_HEADER_SIZE + bytes);
     }
 
     public byte[] getSpace() {
         return activeSpace == 0 ? space1 : space2;
+    }
+    
+    public byte[] getOtherSpace() {
+        return activeSpace == 0 ? space2 : space1;
     }
 
     public int allocClass(VMClass clazz) {
@@ -64,6 +70,9 @@ public final class Heap {
             collect();
         }
 
+        // Class marker
+        saveInt(CLASS_MARK);
+
         // Class handle 
         saveInt(clazz.handle);
 
@@ -88,7 +97,7 @@ public final class Heap {
     public VMClass getObject(int address) {
         // If it turns out we actually need to store 0xFFFFFFFF or some other shit,
         // we'll need to have something like pointer + 4 here.
-        int handle = Utils.byteArrayToInt(getSpace(), address);
+        int handle = Utils.byteArrayToInt(getSpace(), address + 4);
         return virtualMachine.getClassesTable().getClassByHandle(handle);
     }
 
@@ -125,10 +134,10 @@ public final class Heap {
 
         List<Integer> heapObjects = getAllObjectsOnHeap();
         List<Integer> stackObjects = getAllObjectsOnStack();
-        
+
         // remove objects in use from the collection
         heapObjects.removeAll(stackObjects);
-        
+
         moveAliveObjects(heapObjects);
 
         if (virtualMachine.debug) {
@@ -140,9 +149,9 @@ public final class Heap {
         List<Integer> objects = new ArrayList<>();
 
         for (int i = 0; i < getSpace().length; i += FieldType.TYPE_BYTE_SIZE) {
-            VMClass clazz = getObject(i);
+            int marker = Utils.byteArrayToInt(getSpace(), i);
 
-            if (clazz != null) {
+            if (marker == CLASS_MARK) {
                 objects.add(i);
             }
         }
@@ -158,9 +167,9 @@ public final class Heap {
                 continue;
             }
             for (int i = 0; i < sf.getPointer(); i += FieldType.TYPE_BYTE_SIZE) {
-                VMClass clazz = getObject(i);
+                int marker = Utils.byteArrayToInt(getSpace(), i);
 
-                if (clazz != null) {
+                if (marker == CLASS_MARK) {
                     objects.add(i);
                 }
             }
@@ -170,6 +179,11 @@ public final class Heap {
     }
 
     private void moveAliveObjects(List<Integer> heapObjects) {
-        
+        //switchSpaces();
+        for (Integer p : heapObjects) {
+            int oldPointer = p;
+            int objectSize = Utils.byteArrayToInt(getSpace(), (p + 8));
+            int test = 1;
+        }
     }
 }
