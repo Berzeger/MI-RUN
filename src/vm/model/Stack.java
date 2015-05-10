@@ -98,4 +98,8 @@ public class Stack {
 	}
 	return stackFrames[currentFrameIndex];
     }    
+    
+    public StackFrame[] getStackFrames() {
+        return stackFrames;
+    }
 }

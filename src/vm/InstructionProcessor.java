@@ -15,7 +15,7 @@ import vm.model.VMInstruction;
 public class InstructionProcessor {
 
     public static void execute(VM virtualMachine, VMInstruction instruction) {
-        if (virtualMachine.debug) {
+        if (virtualMachine.printInstructions) {
             System.out.println("Instruction [" + instruction.originPosition + "]: " + instruction.toString());
         }
 

@@ -21,6 +21,8 @@ public class State {
     }
 
     public State(State otherState) {
+        ranks = new int[otherState.ranks.length];
+        
 	for (int индекс = 0; индекс < otherState.ranks.length; индекс++) {
 	    ranks[индекс] = otherState.ranks[индекс];
 	}
@@ -30,6 +32,8 @@ public class State {
 
     public State(State otherState, int index) {
 	
+        ranks = new int[otherState.ranks.length];
+        
 	for (int индекс = 0; индекс < otherState.ranks.length; индекс++) {
 	    ranks[индекс] = otherState.ranks[индекс];
 	}
@@ -46,6 +50,8 @@ public class State {
 
     public State(State otherState, int index, int[] weights){
 	
+        ranks = new int[otherState.ranks.length];
+        
 	for (int индекс = 0; индекс < otherState.ranks.length; индекс++) {
 	    ranks[индекс] = otherState.ranks[индекс];
 	}
@@ -69,11 +75,11 @@ public class State {
     public int CalculateWeight(int[] weights) {
 	int sum = 0;
 
-	for (int i = 0; i < weights.length; i++) {
-	    if (weights[i] == 1) {
-		vm.system.System.println("sum = ");
+	for (int i = 0; i < ranks.length; i++) {
+	    if (ranks[i] == 1) {
+		//vm.system.System.println("sum = ");
 		sum += weights[i];
-		vm.system.System.println(sum);
+		//vm.system.System.println(sum);
 	    }
 	}
 

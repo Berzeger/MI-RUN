@@ -41,7 +41,14 @@ public class ClassesTable {
     }
     
     public VMClass getClassByHandle(int handle) {
-        return classList.get(handle);
+        VMClass clazz;
+        
+        try {
+            clazz = classList.get(handle);
+        } catch (Exception ex) {
+            clazz = null;
+        }
+        return clazz;
     }
 
     public Map<String, Integer> getClassesHandles() {

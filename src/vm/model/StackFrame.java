@@ -118,4 +118,8 @@ public class StackFrame {
     public int getReturnAddress() {
         return Utils.fieldTypeToInt(Utils.byteArrayToInt(content, 0));
     }
+    
+    public int getPointer() {
+        return pointer;
+    }
 }

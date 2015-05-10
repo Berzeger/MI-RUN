@@ -1,5 +1,7 @@
 package vm.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import vm.Utils;
 import vm.VM;
 
@@ -32,7 +34,7 @@ public final class Heap {
     private boolean isHeapFull(int bytes) {
         return (getSpace().length + bytes) > (size / 2);
     }
-    
+
     public byte[] getSpace() {
         return activeSpace == 0 ? space1 : space2;
     }
@@ -57,9 +59,9 @@ public final class Heap {
 
     public int alloc(VMClass clazz, int size, int content) {
         int address = pointer;
-        
+
         if (isHeapFull(content)) {
-            //collect();
+            collect();
         }
 
         // Class handle 
@@ -106,19 +108,68 @@ public final class Heap {
 
         int arPointer = allocByteArray(bytes.length, bytes);
         Utils.setPointerField(getSpace(), address, clazz.getFieldIndex("bytes"), arPointer);
-        
+
         return address;
+    }
+
+    private void switchSpaces() {
+        // 0 -> 1
+        // 1 -> 0
+        activeSpace = (activeSpace + 1) % 2;
     }
 
     private void collect() {
         if (virtualMachine.debug) {
             System.out.println("Starting garbage collector.");
         }
+
+        List<Integer> heapObjects = getAllObjectsOnHeap();
+        List<Integer> stackObjects = getAllObjectsOnStack();
         
-        //List<VMClass> all
+        // remove objects in use from the collection
+        heapObjects.removeAll(stackObjects);
         
+        moveAliveObjects(heapObjects);
+
         if (virtualMachine.debug) {
             System.out.println("Garbage collecting finished. Enjoy your new trash-free heap!");
         }
+    }
+
+    private List<Integer> getAllObjectsOnHeap() {
+        List<Integer> objects = new ArrayList<>();
+
+        for (int i = 0; i < getSpace().length; i += FieldType.TYPE_BYTE_SIZE) {
+            VMClass clazz = getObject(i);
+
+            if (clazz != null) {
+                objects.add(i);
+            }
+        }
+
+        return objects;
+    }
+
+    private List<Integer> getAllObjectsOnStack() {
+        List<Integer> objects = new ArrayList<>();
+
+        for (StackFrame sf : virtualMachine.getStack().getStackFrames()) {
+            if (sf == null) {
+                continue;
+            }
+            for (int i = 0; i < sf.getPointer(); i += FieldType.TYPE_BYTE_SIZE) {
+                VMClass clazz = getObject(i);
+
+                if (clazz != null) {
+                    objects.add(i);
+                }
+            }
+        }
+
+        return objects;
+    }
+
+    private void moveAliveObjects(List<Integer> heapObjects) {
+        
     }
 }
