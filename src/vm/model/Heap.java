@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import vm.Utils;
 import vm.VM;
+import vm.garbagecollector.GarbageCollector;
 
 /**
  *
@@ -13,6 +14,7 @@ public final class Heap {
 
     private final VM virtualMachine;
     private final int size;
+    private final GarbageCollector garbageCollector;
     private byte[] space1;
     private byte[] space2;
     private int pointer;
@@ -31,18 +33,35 @@ public final class Heap {
         space2 = new byte[halfSize];
         pointer = 0;
         activeSpace = 0;
+        garbageCollector = new GarbageCollector(virtualMachine);
     }
 
     private boolean isHeapFull(int bytes) {
         return (getSpace().length - pointer) <= (OBJECT_HEADER_SIZE + bytes);
     }
+    
+    public int getActiveSpaceNumber() {
+        return activeSpace;
+    }
+    
+    public void setActiveSpace(int space) {
+        activeSpace = space;
+    }
+    
+    public void setPointer(int p) {
+        pointer = p;
+    }
 
     public byte[] getSpace() {
         return activeSpace == 0 ? space1 : space2;
     }
-    
+
     public byte[] getOtherSpace() {
         return activeSpace == 0 ? space2 : space1;
+    }
+    
+    public byte[] getSpace(int space) {
+        return space == 0 ? space1 : space2;
     }
 
     public int allocClass(VMClass clazz) {
@@ -67,7 +86,7 @@ public final class Heap {
         int address = pointer;
 
         if (isHeapFull(content)) {
-            collect();
+            garbageCollector.collect();
         }
 
         // Class marker
@@ -121,69 +140,9 @@ public final class Heap {
         return address;
     }
 
-    private void switchSpaces() {
+    public void switchSpaces() {
         // 0 -> 1
         // 1 -> 0
         activeSpace = (activeSpace + 1) % 2;
-    }
-
-    private void collect() {
-        if (virtualMachine.debug) {
-            System.out.println("Starting garbage collector.");
-        }
-
-        List<Integer> heapObjects = getAllObjectsOnHeap();
-        List<Integer> stackObjects = getAllObjectsOnStack();
-
-        // remove objects in use from the collection
-        heapObjects.removeAll(stackObjects);
-
-        moveAliveObjects(heapObjects);
-
-        if (virtualMachine.debug) {
-            System.out.println("Garbage collecting finished. Enjoy your new trash-free heap!");
-        }
-    }
-
-    private List<Integer> getAllObjectsOnHeap() {
-        List<Integer> objects = new ArrayList<>();
-
-        for (int i = 0; i < getSpace().length; i += FieldType.TYPE_BYTE_SIZE) {
-            int marker = Utils.byteArrayToInt(getSpace(), i);
-
-            if (marker == CLASS_MARK) {
-                objects.add(i);
-            }
-        }
-
-        return objects;
-    }
-
-    private List<Integer> getAllObjectsOnStack() {
-        List<Integer> objects = new ArrayList<>();
-
-        for (StackFrame sf : virtualMachine.getStack().getStackFrames()) {
-            if (sf == null) {
-                continue;
-            }
-            for (int i = 0; i < sf.getPointer(); i += FieldType.TYPE_BYTE_SIZE) {
-                int marker = Utils.byteArrayToInt(getSpace(), i);
-
-                if (marker == CLASS_MARK) {
-                    objects.add(i);
-                }
-            }
-        }
-
-        return objects;
-    }
-
-    private void moveAliveObjects(List<Integer> heapObjects) {
-        //switchSpaces();
-        for (Integer p : heapObjects) {
-            int oldPointer = p;
-            int objectSize = Utils.byteArrayToInt(getSpace(), (p + 8));
-            int test = 1;
-        }
     }
 }

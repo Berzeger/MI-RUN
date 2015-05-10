@@ -122,4 +122,8 @@ public class StackFrame {
     public int getPointer() {
         return pointer;
     }
+    
+    public byte[] getContent() {
+        return content;
+    }
 }
