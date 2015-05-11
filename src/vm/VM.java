@@ -29,7 +29,7 @@ public class VM {
 
     public VM() {
         stack = new Stack(64, 1024);
-        heap = new Heap(this, 1000);
+        heap = new Heap(this, 320000);
         classesTable = new ClassesTable();
         methodsTable = new MethodsTable();
         instructionsTable = new InstructionsTable();
@@ -75,7 +75,6 @@ public class VM {
         int startAddress = getInstructionsTable().addInstruction(new VMInstruction("apush", new String[]{String.valueOf(address)}));
 
         getInstructionsTable().addInstruction(new VMInstruction("invokestatic", new String[]{"::main::1"}));
-        getInstructionsTable().addInstruction(new VMInstruction("apush", new String[]{"0"}));
         getInstructionsTable().jump(startAddress);
 
         VMInstruction instruction;

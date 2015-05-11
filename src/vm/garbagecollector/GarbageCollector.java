@@ -8,7 +8,9 @@ package vm.garbagecollector;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import vm.Utils;
 import vm.VM;
 import vm.model.FieldType;
@@ -22,7 +24,7 @@ import vm.model.VMClass;
  */
 public class GarbageCollector {
 
-    private VM virtualMachine;
+    private final VM virtualMachine;
     private HashMap<Integer, List<ReallocationHelper>> isAddressedIn;
     private HashMap<Integer, List<ReallocationHelper>> isHolderOf;
     private HashSet<Integer> allObjects;
@@ -43,6 +45,7 @@ public class GarbageCollector {
         allObjects = new HashSet<>();
 
         findPointersInStack();
+        loadObjects();
         copyToNewSpace();
 
         if (virtualMachine.debug) {
@@ -56,7 +59,6 @@ public class GarbageCollector {
                 break;
             }
             for (int i = 0; i < sf.getPointer(); i += FieldType.TYPE_BYTE_SIZE) {
-
                 if (Utils.isPointer(sf.getContent()[i + 3])) {
                     int p = Utils.fieldTypeToInt(Utils.byteArrayToInt(Utils.subArray(sf.getContent(), i, 4), 0));
                     if (p == 0) {
@@ -81,16 +83,11 @@ public class GarbageCollector {
     }
 
     public void copyToNewSpace() {
-        int newSpace = 0;
         int newSpaceNext = 0;
-        if (virtualMachine.getHeap().getActiveSpaceNumber() == 0) {
-            newSpace = 1;
-        }
 
-        for (int i = 0; i < virtualMachine.getHeap().getSpace(newSpace).length; i++) {
-            virtualMachine.getHeap().getSpace(newSpace)[i] = 0;
+        for (int i = 0; i < virtualMachine.getHeap().getOtherSpace().length; i++) {
+            virtualMachine.getHeap().getOtherSpace()[i] = 0;
         }
-        newSpaceNext += 4;
 
         for (int pointer : allObjects) {
             VMClass clazz = virtualMachine.getHeap().getObject(pointer);
@@ -99,7 +96,7 @@ public class GarbageCollector {
             int newPointer = newSpaceNext;
 
             for (int j = pointer; j < pointer + size; j++) {
-                virtualMachine.getHeap().getSpace(newSpace)[newSpaceNext++] = virtualMachine.getHeap().getSpace()[j];
+                virtualMachine.getHeap().getOtherSpace()[newSpaceNext++] = virtualMachine.getHeap().getSpace()[j];
             }
 
             int mod = newSpaceNext % 4;   // 4b padding
@@ -123,41 +120,110 @@ public class GarbageCollector {
             if (holders != null) {
                 for (ReallocationHelper holder : holders) {
                     if (holder.partOfObjectNewPointer != 0) {
-                        Utils.setPointerField(virtualMachine.getHeap().getSpace(newSpace), holder.partOfObjectNewPointer, holder.onField, newPointer);
+                        Utils.setPointerField(virtualMachine.getHeap().getOtherSpace(), holder.partOfObjectNewPointer, holder.onField, newPointer);
                     } else {
                         Utils.setPointerField(virtualMachine.getHeap().getSpace(), holder.partOfObjectPointer, holder.onField, newPointer);
                     }
                 }
             }
 
-            List<ReallocationHelper> childs = isHolderOf.get(pointer);
-            if (childs != null) {
-                for (ReallocationHelper child : childs) {
+            List<ReallocationHelper> children = isHolderOf.get(pointer);
+            if (children != null) {
+                for (ReallocationHelper child : children) {
                     child.partOfObjectNewPointer = newPointer;
                 }
             }
 
         }
 
-        virtualMachine.getHeap().setActiveSpace(newSpace);
+        virtualMachine.getHeap().switchSpaces();
         virtualMachine.getHeap().setPointer(newSpaceNext);
 
     }
 
     private int countObjectSize(VMClass clazz, int pointer) {
         switch (clazz.name) {
-            case "java.lang.Array":
-            {
+            case "java.lang.Array": {
                 int size = Utils.getArrayLength(virtualMachine, pointer);
                 return Heap.OBJECT_HEADER_SIZE + size;
             }
-            case "java.lang.ObjectArray":
-            {
+            case "java.lang.ObjectArray": {
                 int size = Utils.getArrayLength(virtualMachine, pointer);
                 return Heap.OBJECT_HEADER_SIZE + size * FieldType.TYPE_BYTE_SIZE;
             }
             default:
                 return Heap.OBJECT_HEADER_SIZE + clazz.fields.size() * FieldType.TYPE_BYTE_SIZE;
         }
+    }
+
+    private void loadObjects() {
+        for (Entry<Integer, List<StackPlaceHolder>> sh : stackHolders.entrySet()) {
+            List<StackPlaceHolder> sphList = sh.getValue();
+
+            for (StackPlaceHolder sph : sphList) {
+                int pointer = sph.pointer;
+                VMClass clazz = virtualMachine.getHeap().getObject(pointer);
+                if (clazz == null) {
+                    continue;
+                }
+                if (clazz.name.equalsIgnoreCase("java.lang.ObjectArray")) {
+                    int size = Utils.getArrayLength(virtualMachine, pointer);
+                    for (int i = 0; i < size; i++) {
+                        int p = Utils.getObjectArrayValue(virtualMachine, pointer, i);
+
+                        if (p != 0) {
+                            ReallocationHelper realoc = new ReallocationHelper();
+                            realoc.partOfObjectPointer = pointer;
+                            realoc.objectPointer = p;
+                            realoc.onField = i;
+                            
+                            List<ReallocationHelper> list = isAddressedIn.get(p);
+                            if (list == null) {
+                                list = new LinkedList<>();
+                            }
+                            list.add(realoc);
+                            isAddressedIn.put(p, list);
+
+                            list = isHolderOf.get(pointer);
+                            if (list == null) {
+                                list = new LinkedList<>();
+                            }
+                            list.add(realoc);
+                            isHolderOf.put(pointer, list);
+                        }
+                    }
+
+                } else {
+                    for (int i = 0; i < clazz.fields.size(); i++) {
+                        if (clazz.fields.get(i).type.isPointer()) {
+                            byte[] value = Utils.getField(virtualMachine.getHeap().getSpace(), pointer, i);
+                            int p = Utils.fieldTypeToInt(Utils.byteArrayToInt(value, 0));
+
+                            if (p != 0) {
+                                ReallocationHelper realoc = new ReallocationHelper();
+                                realoc.partOfObjectPointer = pointer;
+                                realoc.objectPointer = p;
+                                realoc.onField = i;
+                                
+                                List<ReallocationHelper> list = isAddressedIn.get(p);
+                                if (list == null) {
+                                    list = new LinkedList<>();
+                                }
+                                list.add(realoc);
+                                isAddressedIn.put(p, list);
+
+                                list = isHolderOf.get(pointer);
+                                if (list == null) {
+                                    list = new LinkedList<>();
+                                }
+                                list.add(realoc);
+                                isHolderOf.put(pointer, list);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
